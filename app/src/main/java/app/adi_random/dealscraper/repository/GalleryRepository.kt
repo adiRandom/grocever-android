@@ -7,7 +7,11 @@ import android.provider.MediaStore
 import kotlinx.coroutines.flow.flow
 
 class GalleryRepository(private val contentResolver: ContentResolver) {
-    fun getUnprocessedImagesUris(lastProcessedImageId: Long) = flow {
+
+    // TODO: Implement
+    private fun getLastProcessedId():Long? = 44L
+
+    fun getUnprocessedImagesUris() = flow {
         val collectionUri =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MediaStore.Images.Media.getContentUri(
@@ -30,7 +34,7 @@ class GalleryRepository(private val contentResolver: ContentResolver) {
             // Else stop
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
-                if (id != lastProcessedImageId) {
+                if (id != getLastProcessedId()) {
                     val contentUri =
                         ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
                     emit(contentUri)
