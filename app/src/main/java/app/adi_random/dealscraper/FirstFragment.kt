@@ -3,20 +3,23 @@ package app.adi_random.dealscraper
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import app.adi_random.dealscraper.databinding.FragmentFirstBinding
 import app.adi_random.dealscraper.repository.GalleryRepository
-import kotlinx.coroutines.flow.collect
+import app.adi_random.dealscraper.services.ImageDetectionService
+import app.adi_random.dealscraper.usecase.ImageUseCase
 import kotlinx.coroutines.launch
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -29,6 +32,7 @@ class FirstFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var repository: GalleryRepository
+    private val imageDetectionService = ImageDetectionService()
 
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -75,12 +79,20 @@ class FirstFragment : Fragment() {
 
     }
 
-    fun getImages() {
+    // Test
+    private fun getImages() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.getUnprocessedImagesUris().collect() {
-                    binding.textviewFirst.text =
-                        binding.textviewFirst.text.toString() + " " + it.toString()
+                repository.getUnprocessedImagesUris().collect() { uri ->
+                    // TODO: Extract in function
+                    ImageUseCase.getBitmapFromUri(uri, requireContext())?.let { bitmap ->
+                        val isImageOfInterest =
+                            imageDetectionService.isImageOfInterest(bitmap, requireContext())
+                        if (isImageOfInterest) {
+                            binding.textviewFirst.text =
+                                "${binding.textviewFirst.text} : $uri"
+                        }
+                    }
                 }
             }
         }

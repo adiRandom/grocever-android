@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 class GalleryRepository(private val contentResolver: ContentResolver) {
 
     // TODO: Implement
-    private fun getLastProcessedId():Long? = 44L
+    private fun getLastProcessedId():Long? = null
 
     fun getUnprocessedImagesUris() = flow {
         val collectionUri =
