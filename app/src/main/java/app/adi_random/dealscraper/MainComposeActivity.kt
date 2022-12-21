@@ -9,7 +9,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import app.adi_random.dealscraper.ui.productList.ProductList
+import app.adi_random.dealscraper.ui.theme.Colors
 import app.adi_random.dealscraper.ui.theme.DealScraperTheme
 
 class MainComposeActivity : ComponentActivity() {
@@ -20,9 +23,9 @@ class MainComposeActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = Colors.Background
                 ) {
-                    Greeting("Android")
+                    ProductList()
                 }
             }
         }

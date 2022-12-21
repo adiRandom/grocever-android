@@ -12,7 +12,7 @@ import app.adi_random.dealscraper.ui.theme.Colors
 
 @Composable
 fun ProductEntry(product: ProductModel) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
@@ -27,7 +27,7 @@ fun ProductEntry(product: ProductModel) {
                 .fillMaxWidth()
                 .padding(0.dp, 8.dp, 0.dp, 0.dp)
         ) {
-            Box {
+            Row {
                 Text(
                     text = product.price.toString(),
                     color = Colors.TextSecondary,

@@ -2,6 +2,7 @@ package app.adi_random.dealscraper
 
 import android.app.Application
 import app.adi_random.dealscraper.api.apiModule
+import app.adi_random.dealscraper.ui.uiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
@@ -10,7 +11,7 @@ class GroceverApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@GroceverApplication)
-            modules(listOf(apiModule))
+            modules(listOf(apiModule, uiModule))
         }
     }
 }
