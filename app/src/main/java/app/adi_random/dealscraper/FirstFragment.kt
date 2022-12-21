@@ -46,13 +46,13 @@ class FirstFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         repository = GalleryRepository(requireContext().contentResolver)
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    fun requestGalleryPermission() {
+    private fun requestGalleryPermission() {
         when {
             ContextCompat.checkSelfPermission(
                 requireContext(),
