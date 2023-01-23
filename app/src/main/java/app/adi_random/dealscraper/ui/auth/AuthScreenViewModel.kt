@@ -5,14 +5,12 @@ import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.data.dto.auth.LoginDto
 import app.adi_random.dealscraper.services.api.AuthApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AuthScreenViewModel(
-    val authApi: AuthApi
-) : ViewModel(
-) {
+    private val authApi: AuthApi
+) : ViewModel() {
     private val _email = MutableStateFlow("")
     val email = _email.asStateFlow()
 

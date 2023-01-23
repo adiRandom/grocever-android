@@ -1,9 +1,6 @@
 package app.adi_random.dealscraper.ui.auth
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -19,7 +16,10 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun AuthScreen(viewModel: AuthScreenViewModel = koinViewModel()) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 16.dp)
+    ) {
         val username by viewModel.username.collectAsStateWithLifecycle()
         val email by viewModel.email.collectAsStateWithLifecycle()
         val password by viewModel.password.collectAsStateWithLifecycle()
