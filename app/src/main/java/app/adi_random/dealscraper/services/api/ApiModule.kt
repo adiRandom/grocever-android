@@ -1,4 +1,4 @@
-package app.adi_random.dealscraper.api
+package app.adi_random.dealscraper.services.api
 
 import org.koin.dsl.module
 import app.adi_random.dealscraper.BuildConfig
@@ -12,5 +12,8 @@ val apiModule = module {
     }
     single {
         get<Retrofit>().create(ProductApi::class.java)
+    }
+    single{
+        get<Retrofit>().create(AuthApi::class.java)
     }
 }
