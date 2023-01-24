@@ -8,7 +8,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
 val apiModule = module {
-
     fun getOkHttpClient(preferencesRepository: PreferencesRepository): OkHttpClient {
         return OkHttpClient.Builder().addInterceptor(AuthInterceptor(preferencesRepository)).build()
     }
