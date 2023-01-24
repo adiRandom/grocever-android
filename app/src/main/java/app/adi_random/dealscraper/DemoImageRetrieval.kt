@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import app.adi_random.dealscraper.databinding.FragmentFirstBinding
-import app.adi_random.dealscraper.repository.GalleryRepository
+import app.adi_random.dealscraper.data.repository.GalleryRepository
 import app.adi_random.dealscraper.services.ImageDetectionService
 import app.adi_random.dealscraper.usecase.ImageUseCase
 import kotlinx.coroutines.launch

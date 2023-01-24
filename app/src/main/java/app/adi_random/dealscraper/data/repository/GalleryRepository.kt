@@ -1,4 +1,4 @@
-package app.adi_random.dealscraper.repository
+package app.adi_random.dealscraper.data.repository
 
 import android.content.ContentResolver
 import android.content.ContentUris
