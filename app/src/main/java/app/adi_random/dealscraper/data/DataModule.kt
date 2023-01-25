@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.Room.databaseBuilder
 import org.koin.dsl.module
 import app.adi_random.dealscraper.BuildConfig
+import app.adi_random.dealscraper.data.repository.AuthRepository
 import retrofit2.Retrofit
 
 const val DB_NAME = "GROCEVER_DB"
@@ -27,4 +28,7 @@ val dataModule = module {
         provideAuthDao(get())
     }
 
+    single {
+        AuthRepository(get(), get(), get())
+    }
 }

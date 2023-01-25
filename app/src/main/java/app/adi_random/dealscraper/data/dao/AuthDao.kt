@@ -16,4 +16,7 @@ interface AuthDao {
 
     @Delete
     fun deleteUser(user: UserEntity)
+
+    @Query("DELETE FROM userEntity")
+    fun deleteAll()
 }

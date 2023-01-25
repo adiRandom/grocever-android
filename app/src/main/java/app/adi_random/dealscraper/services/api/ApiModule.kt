@@ -3,6 +3,7 @@ package app.adi_random.dealscraper.services.api
 import org.koin.dsl.module
 import app.adi_random.dealscraper.BuildConfig
 import app.adi_random.dealscraper.data.repository.PreferencesRepository
+import app.adi_random.dealscraper.services.api.mock.MockAuthApi
 import app.adi_random.dealscraper.services.auth.AuthInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -21,7 +22,8 @@ val apiModule = module {
     single {
         get<Retrofit>().create(ProductApi::class.java)
     }
-    single {
-        get<Retrofit>().create(AuthApi::class.java)
+    single<AuthApi> {
+//        get<Retrofit>().create(AuthApi::class.java)
+        MockAuthApi()
     }
 }

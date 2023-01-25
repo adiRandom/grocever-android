@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -40,6 +41,7 @@ fun RegisterForm(
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
+            visualTransformation = PasswordVisualTransformation(),
             value = password,
             onValueChange = { setPassword(it) },
             label = { Text(text = "Password") },

@@ -3,13 +3,16 @@ package app.adi_random.dealscraper.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.data.dto.auth.LoginDto
+import app.adi_random.dealscraper.data.repository.AuthRepository
+import app.adi_random.dealscraper.data.repository.ResultWrapper
 import app.adi_random.dealscraper.services.api.AuthApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AuthScreenViewModel(
-    private val authApi: AuthApi
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _email = MutableStateFlow("")
     val email = _email.asStateFlow()
@@ -25,6 +28,9 @@ class AuthScreenViewModel(
 
     private val _error = MutableStateFlow("")
     val error = _error.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
 
     fun setEmail(value: String) {
         _email.value = value
@@ -45,19 +51,25 @@ class AuthScreenViewModel(
     fun login() {
         _error.value = ""
 
-        if (email.value.isEmpty() || password.value.isEmpty()) {
+        if (username.value.isEmpty() || password.value.isEmpty()) {
             _error.value = "Email and password cannot be empty"
             return
         }
 
-        viewModelScope.launch {
-            val result =
-                authApi.login(LoginDto(username = username.value, password = password.value))
-
-            if (result.error != "") {
-                _error.value = result.error
-            } else {
-                // Save the data
+        viewModelScope.launch(Dispatchers.IO) {
+            authRepository.login(username.value, password.value).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        // TODO: Navigate to main screen
+                        toggleIsLogin()
+                    }
+                    is ResultWrapper.Error -> {
+                        _error.value = result.msg
+                    }
+                    is ResultWrapper.Loading -> {
+                        _isLoading.value = result.isLoading
+                    }
+                }
             }
         }
     }
@@ -65,11 +77,26 @@ class AuthScreenViewModel(
     fun register() {
         _error.value = ""
 
-        if (email.value.isEmpty() || password.value.isEmpty()) {
-            _error.value = "Email and password cannot be empty"
+        if (email.value.isEmpty() || password.value.isEmpty() || username.value.isEmpty()) {
+            _error.value = "All fields are required"
             return
         }
 
-        // Call the repo
+        viewModelScope.launch(Dispatchers.IO) {
+            authRepository.register(username.value, password.value, email.value).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        // TODO: Navigate to main screen
+                        toggleIsLogin()
+                    }
+                    is ResultWrapper.Error -> {
+                        _error.value = result.msg
+                    }
+                    is ResultWrapper.Loading -> {
+                        _isLoading.value = result.isLoading
+                    }
+                }
+            }
+        }
     }
 }
