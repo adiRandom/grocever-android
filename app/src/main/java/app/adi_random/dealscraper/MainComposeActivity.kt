@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import app.adi_random.dealscraper.ui.auth.AuthScreen
+import app.adi_random.dealscraper.ui.navigation.Navigation
 import app.adi_random.dealscraper.ui.productList.ProductList
 import app.adi_random.dealscraper.ui.theme.Colors
 import app.adi_random.dealscraper.ui.theme.DealScraperTheme
@@ -26,7 +27,7 @@ class MainComposeActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Colors.Background
                 ) {
-                    AuthScreen()
+                    Navigation()
                 }
             }
         }

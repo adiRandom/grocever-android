@@ -8,6 +8,7 @@ import app.adi_random.dealscraper.data.dto.auth.UserDto
 import app.adi_random.dealscraper.services.api.AuthApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class AuthRepository(
     private val authDao: AuthDao,
@@ -55,7 +56,13 @@ class AuthRepository(
         preferencesRepository.saveRefreshToken(authResponse.refresh)
     }
 
+    fun isLoggedIn(): Flow<Boolean> {
+        return authDao.getUserFlow().map { it != null }
+    }
+
     private fun deleteCurrentUser(){
         authDao.deleteAll()
     }
+
+
 }

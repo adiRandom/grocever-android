@@ -5,11 +5,15 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import app.adi_random.dealscraper.data.entity.UserEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AuthDao {
     @Query("SELECT * FROM userEntity")
-    fun getUser(): UserEntity
+    fun getUser(): UserEntity?
+
+    @Query("SELECT * FROM userEntity")
+    fun getUserFlow(): Flow<UserEntity?>
 
     @Insert
     fun saveUser(user: UserEntity)

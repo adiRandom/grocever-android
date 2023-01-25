@@ -7,7 +7,9 @@ import app.adi_random.dealscraper.data.repository.AuthRepository
 import app.adi_random.dealscraper.data.repository.ResultWrapper
 import app.adi_random.dealscraper.services.api.AuthApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,9 @@ class AuthScreenViewModel(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
+
+    private val _navigateToMain = MutableSharedFlow<Unit>()
+    val navigateToMain = _navigateToMain.asSharedFlow()
 
     fun setEmail(value: String) {
         _email.value = value
@@ -60,7 +65,7 @@ class AuthScreenViewModel(
             authRepository.login(username.value, password.value).collect { result ->
                 when (result) {
                     is ResultWrapper.Success -> {
-                        // TODO: Navigate to main screen
+                        _navigateToMain.emit(Unit)
                         toggleIsLogin()
                     }
                     is ResultWrapper.Error -> {
@@ -86,7 +91,7 @@ class AuthScreenViewModel(
             authRepository.register(username.value, password.value, email.value).collect { result ->
                 when (result) {
                     is ResultWrapper.Success -> {
-                        // TODO: Navigate to main screen
+                        _navigateToMain.emit(Unit)
                         toggleIsLogin()
                     }
                     is ResultWrapper.Error -> {
