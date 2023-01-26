@@ -1,43 +1,29 @@
 package app.adi_random.dealscraper.ui.productList
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.data.models.ProductModel
+import app.adi_random.dealscraper.data.repository.ProductRepository
+import app.adi_random.dealscraper.data.repository.ResultWrapper
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
-class ProductListViewModel : ViewModel() {
+class ProductListViewModel(private val productRepository: ProductRepository) : ViewModel() {
     private val _products = MutableStateFlow<List<ProductModel>>(emptyList())
     val products = _products
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading
+
     fun getProducts() {
-        // TODO: Make api call to get products
-        _products.value = listOf(
-            ProductModel(
-                id = 1,
-                name = "Product 1",
-                ocrName = "Product 1",
-                price = 10.0f,
-                bestPrice = 5.0f,
-                url = "https://www.google.com",
-                store = "Store 1"
-            ),
-            ProductModel(
-                id = 2,
-                name = "Product 2",
-                ocrName = "Product 2",
-                price = 20.0f,
-                bestPrice = 15.0f,
-                url = "https://www.google.com",
-                store = "Store 2"
-            ),
-            ProductModel(
-                id = 3,
-                name = "Product 3",
-                ocrName = "Product 3",
-                price = 30.0f,
-                bestPrice = 25.0f,
-                url = "https://www.google.com",
-                store = "Store 3"
-            )
-        )
+        viewModelScope.launch {
+            productRepository.getProductList().collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> _products.value = result.data
+                    is ResultWrapper.Error -> TODO()
+                    is ResultWrapper.Loading -> _isLoading.value = result.isLoading
+                }
+            }
+        }
     }
 }

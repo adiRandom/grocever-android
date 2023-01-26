@@ -12,6 +12,14 @@ import app.adi_random.dealscraper.ui.theme.Colors
 
 @Composable
 fun ProductEntry(product: ProductModel) {
+    val worstPrice = product.purchaseInstalments.fold(0f) { acc, instalment ->
+        val price = instalment.qty * instalment.unitPrice
+        if (price > acc) {
+            acc
+        } else {
+            price
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +37,7 @@ fun ProductEntry(product: ProductModel) {
         ) {
             Row {
                 Text(
-                    text = product.price.toString(),
+                    text = worstPrice.toString(),
                     color = Colors.TextSecondary,
                     textDecoration = TextDecoration.LineThrough
                 )
@@ -39,7 +47,8 @@ fun ProductEntry(product: ProductModel) {
                     modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
                 )
             }
-            Text(text = "@${product.store}", color = Colors.TextDisabled)
+            // TODO: Add url
+            Text(text = "@${product.bestStore.name}", color = Colors.TextDisabled)
         }
     }
 }
