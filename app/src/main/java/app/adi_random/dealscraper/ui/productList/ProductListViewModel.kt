@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import app.adi_random.dealscraper.data.repository.ResultWrapper
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProductListViewModel(private val productRepository: ProductRepository) : ViewModel() {
@@ -14,6 +14,22 @@ class ProductListViewModel(private val productRepository: ProductRepository) : V
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading
+
+    val actualSpending = products.map { products ->
+        products.map { product ->
+            product.purchaseInstalments.fold(0f) { acc, purchaseInstalment -> acc + purchaseInstalment.qty * purchaseInstalment.unitPrice }
+        }.sum()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
+
+    private val bestSpending = products.map { products ->
+        products.map { product ->
+            product.bestPrice
+        }.sum()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
+
+    val savings = actualSpending.combine(bestSpending) { actual, best ->
+        actual - best
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
     fun getProducts() {
         viewModelScope.launch {

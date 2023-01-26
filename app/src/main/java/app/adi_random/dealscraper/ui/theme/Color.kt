@@ -13,4 +13,6 @@ object Colors {
     val TextDisabled = Color(0xFFBDBDBD)
     val Background = Color(0xFFFFFFFF)
     val Primary = Color(0xFF6200EE)
+    val Secondary = Color(0xFF03DAC5)
+    val TextOnPrimary = Color(0xFFFFFFFF)
 }

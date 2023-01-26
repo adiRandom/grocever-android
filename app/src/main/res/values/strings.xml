@@ -5,4 +5,9 @@
     <string name="login_password">Password</string>
     <string name="login_username">Username</string>
     <string name="register_btn">Register</string>
+    <string name="actual_spending"> We see that you spent</string>
+    <string name="savings1">And </string>
+    <string name="savings2">missed </string>
+    <string name="savings3">out on saving</string>
+    <string name="savings4">up to</string>
 </resources>

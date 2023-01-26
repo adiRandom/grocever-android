@@ -15,9 +15,9 @@ fun ProductEntry(product: ProductModel) {
     val worstPrice = product.purchaseInstalments.fold(0f) { acc, instalment ->
         val price = instalment.qty * instalment.unitPrice
         if (price > acc) {
-            acc
-        } else {
             price
+        } else {
+            acc
         }
     }
     Column(
