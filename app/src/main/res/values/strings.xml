@@ -10,4 +10,6 @@
     <string name="savings2">missed </string>
     <string name="savings3">out on saving</string>
     <string name="savings4">up to</string>
+    <string name="you_bought">You bought</string>
+    <string name="product_savings">This would have saved you</string>
 </resources>

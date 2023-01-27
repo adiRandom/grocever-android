@@ -11,11 +11,20 @@ class ProductRepository(private val api: ProductApi) {
         if (apiResponse.isSuccessful) {
             val products = apiResponse.body.products
             val productModels = products.map { it.toModel() }
+            saveProductList(productModels)
             emit(ResultWrapper.Success(productModels))
         } else {
             emit(ResultWrapper.Error(apiResponse.error))
         }
 
         emit(ResultWrapper.Loading(false))
+    }
+
+    private fun saveProductList(products: List<ProductModel>) {
+        // TODO: Save to local database
+    }
+
+    fun getProduct(id: Int):ProductModel? {
+        TODO("Get from local database")
     }
 }
