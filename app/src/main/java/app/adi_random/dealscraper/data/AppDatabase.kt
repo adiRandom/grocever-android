@@ -3,6 +3,7 @@ package app.adi_random.dealscraper.data
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import app.adi_random.dealscraper.data.dao.AuthDao
+import app.adi_random.dealscraper.data.dao.ProductDao
 import app.adi_random.dealscraper.data.entity.UserEntity
 
 
@@ -12,4 +13,5 @@ import app.adi_random.dealscraper.data.entity.UserEntity
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun authDao(): AuthDao
+    abstract fun productDao(): ProductDao
 }

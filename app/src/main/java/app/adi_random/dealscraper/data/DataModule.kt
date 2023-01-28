@@ -20,6 +20,7 @@ val dataModule = module {
     }
 
     fun provideAuthDao(db: AppDatabase) = db.authDao()
+    fun provideProductDao(db: AppDatabase) = db.productDao()
 
 
     single {
@@ -28,12 +29,15 @@ val dataModule = module {
     single {
         provideAuthDao(get())
     }
+    single {
+        provideProductDao(get())
+    }
 
     single {
         AuthRepository(get(), get(), get())
     }
 
     single{
-        ProductRepository(get())
+        ProductRepository(get(), get())
     }
 }

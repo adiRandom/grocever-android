@@ -6,21 +6,22 @@ import app.adi_random.dealscraper.data.models.UserProductInstalment
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import kotlinx.coroutines.flow.*
 
-class ProductDetailsViewModel(productRepository: ProductRepository, productId: Int) : ViewModel() {
-    val product = MutableStateFlow(productRepository.getProduct(productId)).asStateFlow()
+class ProductDetailsViewModel(productRepository: ProductRepository, productName: String) : ViewModel() {
+    val product = MutableStateFlow(productRepository.getProduct(productName)).asStateFlow()
     val productInstalmentsByOcrName =
         product.map { productModel ->
             productModel?.purchaseInstalments?.groupBy {
                 it.ocrName
-            }?.mapValues { (ocrName, instalments) ->
-                instalments.groupBy { instalment ->
+            }?.mapValues { (ocrName, instalmentsByOcrName) ->
+                instalmentsByOcrName.groupBy { instalment ->
                     Pair(instalment.storeName, instalment.unitPrice)
-                }.map { (key, instalmentsByNameAndPrice) ->
+                }.map { (key, instalmentsByStoreAndPrice) ->
                     UserProductInstalment(
-                        qty = instalmentsByNameAndPrice.sumOf { it.qty.toDouble() }.toFloat(),
+                        qty = instalmentsByStoreAndPrice.sumOf { it.qty.toDouble() }.toFloat(),
                         unitPrice = key.second,
                         ocrName = ocrName,
-                        storeName = key.first
+                        storeName = key.first,
+                        id = instalmentsByStoreAndPrice.first().id
                     )
                 }
             }?.toList()
