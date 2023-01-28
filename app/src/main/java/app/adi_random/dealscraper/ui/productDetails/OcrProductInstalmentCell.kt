@@ -56,7 +56,7 @@ fun OcrProductInstalmentCell(
             )
 
             Text(
-                text = "$measureUnit ${instalment.unitPrice} RON / $measureUnit",
+                text = "${instalment.unitPrice} RON / $measureUnit",
                 color = Colors.TextOnPrimary,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
