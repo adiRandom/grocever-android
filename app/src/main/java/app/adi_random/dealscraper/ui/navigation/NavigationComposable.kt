@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import app.adi_random.dealscraper.ui.auth.AuthScreen
 import app.adi_random.dealscraper.ui.productDetails.ProductDetails
 import app.adi_random.dealscraper.ui.productList.ProductList
+import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -29,7 +30,7 @@ fun Navigation(viewModel: NavigationViewModel = koinViewModel()) {
         }
         composable(Routes.PRODUCT_DETAILS) {
             val productName = it.arguments?.getString("productName")
-            ProductDetails(viewModel = koinViewModel { parametersOf(productName) })
+            ProductDetails(viewModel = getViewModel { parametersOf(productName) })
         }
     }
 }

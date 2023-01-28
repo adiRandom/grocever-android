@@ -1,15 +1,15 @@
 package app.adi_random.dealscraper.ui.productDetails
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.data.models.UserProductInstalment
 import app.adi_random.dealscraper.ui.theme.Colors
 
@@ -31,12 +31,12 @@ fun OcrProductInstalmentCell(
     } else {
         0.dp
     }
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp, 0.dp)
             .background(
-                color = Colors.AccentBackground,
+                color = Colors.PrimaryLight,
                 shape = RoundedCornerShape(
                     topCorner,
                     topCorner,
@@ -46,9 +46,27 @@ fun OcrProductInstalmentCell(
             )
             .padding(8.dp)
     ) {
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "${instalment.qty} $measureUnit",
+                color = Colors.TextOnPrimary,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 8.dp, 0.dp)
+            )
+
+            Text(
+                text = "$measureUnit ${instalment.unitPrice} RON / $measureUnit",
+                color = Colors.TextOnPrimary,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(8.dp, 0.dp, 0.dp, 0.dp)
+            )
+        }
         Text(
-            text = "${instalment.ocrName} X ${instalment.qty} $measureUnit for ${instalment.unitPrice} / $measureUnit",
-            color = Colors.TextPrimary
+            text = "from ${instalment.storeName}",
+            color = Colors.TextDisabled,
+            fontSize = 12.sp
         )
     }
 }

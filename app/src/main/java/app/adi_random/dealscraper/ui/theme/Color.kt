@@ -1,6 +1,7 @@
 package app.adi_random.dealscraper.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.room.PrimaryKey
 
 val Purple200 = Color(0xFFBB86FC)
 val Purple500 = Color(0xFF6200EE)
@@ -14,6 +15,7 @@ object Colors {
     val Background = Color(0xFFFFFFFF)
     val AccentBackground = Color(0xFFA7A7A7)
     val Primary = Color(0xFF6200EE)
+    val PrimaryLight = Color(0xFFAA72FA)
     val Secondary = Color(0xFF03DAC5)
     val TextOnPrimary = Color(0xFFFFFFFF)
 }

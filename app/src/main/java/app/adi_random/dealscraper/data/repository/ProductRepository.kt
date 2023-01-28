@@ -13,8 +13,8 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
         if (apiResponse.isSuccessful) {
             val products = apiResponse.body.products
             val productModels = products.map { it.toModel() }
-            saveProductList(productModels)
             emit(ResultWrapper.Success(productModels))
+            saveProductList(productModels)
         } else {
             emit(ResultWrapper.Error(apiResponse.error))
         }
@@ -31,6 +31,7 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
                 )
             }
 
+        dao.deleteAllProductsAndPurchaseInstalments()
         dao.saveProducts(productEntities)
     }
 

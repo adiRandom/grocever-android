@@ -16,6 +16,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import app.adi_random.dealscraper.ui.misc.LoadingScreen
+import app.adi_random.dealscraper.ui.navigation.Routes
+import app.adi_random.dealscraper.usecase.CollectAsEffect
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -30,6 +32,10 @@ fun ProductList(
         viewModel.getProducts()
     }
 
+    viewModel.navigateToProductDetails.CollectAsEffect{
+        navController.navigate(Routes.getProductDetailsRoute(it))
+    }
+
     LoadingScreen(isLoading = isLoading) {
         Column() {
             val actualSpending by viewModel.actualSpending.collectAsStateWithLifecycle()
@@ -38,7 +44,9 @@ fun ProductList(
             ProductListHeader(actualSpending = actualSpending, savings = savings)
             LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
                 items(items = products, key = { it.name }) { product ->
-                    ProductEntry(product = product)
+                    ProductEntry(product = product){
+                        viewModel.navigateToProductDetails(it)
+                    }
                 }
             }
         }

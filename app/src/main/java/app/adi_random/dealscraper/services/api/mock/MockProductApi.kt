@@ -35,7 +35,7 @@ class MockProductApi : ProductApi {
                             UserProductInstalmentDto(
                                 ocrName = "Pr2",
                                 id = 2,
-                                storeName = "Store Y",
+                                storeName = "Mega Image",
                                 qty = 1f,
                                 unitPrice = 20.0f
                             ),

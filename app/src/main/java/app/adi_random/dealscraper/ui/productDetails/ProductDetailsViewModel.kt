@@ -1,13 +1,26 @@
 package app.adi_random.dealscraper.ui.productDetails
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.data.models.UserProductInstalment
 import app.adi_random.dealscraper.data.repository.ProductRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-class ProductDetailsViewModel(productRepository: ProductRepository, productName: String) : ViewModel() {
-    val product = MutableStateFlow(productRepository.getProduct(productName)).asStateFlow()
+class ProductDetailsViewModel(
+    private val productRepository: ProductRepository,
+    private val productName: String
+) : ViewModel() {
+    private val _product = MutableStateFlow<ProductModel?>(null)
+    val product = _product.asStateFlow()
+
+    init{
+        getProduct()
+    }
+
     val productInstalmentsByOcrName =
         product.map { productModel ->
             productModel?.purchaseInstalments?.groupBy {
@@ -33,11 +46,18 @@ class ProductDetailsViewModel(productRepository: ProductRepository, productName:
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
     private val bestSpending = product.map { productModel ->
-        (productModel?.purchaseInstalments?.sumOf { instalment -> instalment.unitPrice.toDouble() }
+        (productModel?.purchaseInstalments?.sumOf { instalment -> instalment.qty.toDouble() }
             ?.toFloat() ?: 0f) * (productModel?.bestPrice ?: 0f)
-    }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
     val savings = actualSpending.combine(bestSpending) { actual, best ->
         actual - best
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
+
+    private fun getProduct() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val res = productRepository.getProduct(productName)
+            _product.value = res
+        }
+    }
 }

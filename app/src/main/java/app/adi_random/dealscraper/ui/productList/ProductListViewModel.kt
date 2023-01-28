@@ -16,6 +16,9 @@ class ProductListViewModel(private val productRepository: ProductRepository) : V
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading
 
+    private val _navigateToProductDetails = MutableSharedFlow<String>()
+    val navigateToProductDetails = _navigateToProductDetails.asSharedFlow()
+
     val actualSpending = products.map { products ->
         products.map { product ->
             product.purchaseInstalments.fold(0f) { acc, purchaseInstalment -> acc + purchaseInstalment.qty * purchaseInstalment.unitPrice }
@@ -41,6 +44,12 @@ class ProductListViewModel(private val productRepository: ProductRepository) : V
                     is ResultWrapper.Loading -> _isLoading.value = result.isLoading
                 }
             }
+        }
+    }
+
+    fun navigateToProductDetails(productName: String) {
+        viewModelScope.launch {
+            _navigateToProductDetails.emit(productName)
         }
     }
 }

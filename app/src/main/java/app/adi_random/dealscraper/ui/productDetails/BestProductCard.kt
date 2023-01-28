@@ -17,12 +17,18 @@ fun BestProductCard(product: ProductModel) {
             .fillMaxWidth()
             .padding(0.dp, 16.dp)
             .background(color = Colors.Background, shape = RoundedCornerShape(8.dp))
+            .padding(16.dp, 8.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(0.dp,0.dp, 0.dp, 4.dp)) {
-            Text(text = product.name, color = Colors.TextPrimary)
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 0.dp, 0.dp, 4.dp)
+        ) {
+            Text(text = product.name, color = Colors.Secondary)
             // TODO: Add Url
             Text(text = product.bestStore.name, color = Colors.TextPrimary)
         }
-        Text(text = "${product.bestPrice} RON", color = Colors.TextPrimary)
+        Text(text = "${product.bestPrice} RON / ${product.unitName}", color = Colors.TextPrimary)
     }
 }

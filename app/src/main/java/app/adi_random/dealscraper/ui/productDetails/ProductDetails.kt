@@ -27,11 +27,14 @@ import app.adi_random.dealscraper.ui.theme.Colors
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ProductDetails(viewModel: ProductDetailsViewModel) {
-    Column(Modifier.padding(8.dp, 16.dp)) {
+    Column(Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)) {
         Text(
             text = stringResource(id = R.string.you_bought),
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 0.dp)
         )
         // TODO: Add report button
 
@@ -42,7 +45,7 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(0.dp, 8.dp)
+                .padding(16.dp, 8.dp)
         ) {
             items(
                 items = productInstalmentsByOcrName ?: emptyList(),
@@ -52,7 +55,9 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                     text = ocrName,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
+                    modifier = Modifier
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
                 )
                 instalments.forEachIndexed { index, instalment ->
                     OcrProductInstalmentCell(
@@ -92,7 +97,7 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                 modifier = Modifier.padding(0.dp, 8.dp)
             )
 
-            if(product != null) {
+            if (product != null) {
                 BestProductCard(product = product!!)
             }
         }

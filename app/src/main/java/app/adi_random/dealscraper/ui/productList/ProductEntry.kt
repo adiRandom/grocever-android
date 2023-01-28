@@ -1,6 +1,7 @@
 package app.adi_random.dealscraper.ui.productList
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -11,7 +12,7 @@ import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.ui.theme.Colors
 
 @Composable
-fun ProductEntry(product: ProductModel) {
+fun ProductEntry(product: ProductModel, openProductDetails: (String) -> Unit) {
     val worstPrice = product.purchaseInstalments.fold(0f) { acc, instalment ->
         val price = instalment.qty * instalment.unitPrice
         if (price > acc) {
@@ -25,6 +26,9 @@ fun ProductEntry(product: ProductModel) {
             .fillMaxWidth()
             .padding(8.dp)
             .background(color = Colors.Background)
+            .clickable {
+                openProductDetails(product.name)
+            }
     ) {
         Row {
             Text(text = product.name, color = Colors.TextPrimary)
