@@ -5,7 +5,6 @@ import app.adi_random.dealscraper.data.models.StoreMetadataModel
 import app.adi_random.dealscraper.data.models.UserProductInstalment
 
 data class UserProductDto(
-    val id: Int,
     val name: String,
     val bestPrice: Float,
     val purchaseInstalments: List<UserProductInstalmentDto>,
@@ -15,7 +14,6 @@ data class UserProductDto(
     val bestStoreUrl: String,
 ){
     fun toModel() = ProductModel(
-        id = id,
         name = name,
         bestPrice = bestPrice,
         purchaseInstalments = purchaseInstalments.map { it.toModel() },

@@ -41,6 +41,7 @@ abstract class ProductDao {
     }
 
     @Query("SELECT * FROM products WHERE name = :name")
+    @Transaction
     abstract fun getProductByName(name: String): ProductWithPurchaseInstalmentsRelation?
 
 }

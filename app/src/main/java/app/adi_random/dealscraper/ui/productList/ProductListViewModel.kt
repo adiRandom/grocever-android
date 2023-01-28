@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import app.adi_random.dealscraper.data.repository.ResultWrapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,7 @@ class ProductListViewModel(private val productRepository: ProductRepository) : V
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
     fun getProducts() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             productRepository.getProductList().collect { result ->
                 when (result) {
                     is ResultWrapper.Success -> _products.value = result.data

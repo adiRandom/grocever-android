@@ -13,13 +13,14 @@ class MockProductApi : ProductApi {
             200, UserProductListDto(
                 listOf(
                     UserProductDto(
-                        id = 1,
                         name = "Product 1",
-                        ocrName = "Pr1",
                         purchaseInstalments = listOf(
                             UserProductInstalmentDto(
                                 qty = 1f,
-                                unitPrice = 10.0f
+                                unitPrice = 10.0f,
+                                ocrName = "Pr1",
+                                storeName = "Store X",
+                                id = 1
                             )
                         ),
                         bestPrice = 5.0f,
@@ -29,17 +30,21 @@ class MockProductApi : ProductApi {
                         unitName = "kg"
                     ),
                     UserProductDto(
-                        id = 2,
                         name = "Product 2",
-                        ocrName = "Pr2",
                         purchaseInstalments = listOf(
                             UserProductInstalmentDto(
+                                ocrName = "Pr2",
+                                id = 2,
+                                storeName = "Store Y",
                                 qty = 1f,
                                 unitPrice = 20.0f
                             ),
                             UserProductInstalmentDto(
                                 qty = 1f,
-                                unitPrice = 20.0f
+                                unitPrice = 20.0f,
+                                ocrName = "Pr2",
+                                id = 3,
+                                storeName = "Store Z",
                             )
                         ),
                         bestPrice = 15.0f,
@@ -49,13 +54,14 @@ class MockProductApi : ProductApi {
                         unitName = "kg"
                     ),
                     UserProductDto(
-                        id = 3,
                         name = "Product 3",
-                        ocrName = "Pr3",
                         purchaseInstalments = listOf(
                             UserProductInstalmentDto(
                                 qty = 1f,
-                                unitPrice = 30.0f
+                                unitPrice = 30.0f,
+                                ocrName = "Pr3",
+                                id = 4,
+                                storeName = "Store X",
                             )
                         ),
                         bestPrice = 25.0f,

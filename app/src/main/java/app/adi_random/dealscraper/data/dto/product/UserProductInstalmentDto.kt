@@ -3,6 +3,7 @@ package app.adi_random.dealscraper.data.dto.product
 import app.adi_random.dealscraper.data.models.UserProductInstalment
 
 data class UserProductInstalmentDto(
+    val id: Int,
     val qty: Float,
     val unitPrice: Float,
     val ocrName: String,
@@ -12,6 +13,7 @@ data class UserProductInstalmentDto(
         qty = qty,
         unitPrice = unitPrice,
         ocrName = ocrName,
-        storeName = storeName
+        storeName = storeName,
+        id = id
     )
 }

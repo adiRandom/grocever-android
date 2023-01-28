@@ -1,5 +1,6 @@
 package app.adi_random.dealscraper.data.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import app.adi_random.dealscraper.data.models.StoreMetadataModel
@@ -10,5 +11,6 @@ data class ProductEntity(
     val name: String,
     val bestPrice: Float,
     val unitName: String,
+    @Embedded
     val bestStore: StoreMetadataModel
 )
