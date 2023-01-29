@@ -12,4 +12,15 @@
     <string name="savings4">up to</string>
     <string name="you_bought">You bought</string>
     <string name="product_savings">This would have saved you</string>
+    <string name="manually_add">Add a product</string>
+    <string name="manually_add_name_label">Product name</string>
+    <string name="manually_add_name_hint">Skimmed Milk</string>
+    <string name="manually_add_price_label">Price</string>
+    <string name="manually_add_price_hint">2.99</string>
+    <string name="manually_add_quantity_label">Quantity</string>
+    <string name="manually_add_quantity_hint">1</string>
+    <string name="manually_add_unit_label">Unit</string>
+    <string name="manually_add_btn">Add</string>
+    <string name="manually_add_unit_kg">Kg</string>
+    <string name="manually_add_unit_buc">Buc</string>
 </resources>
