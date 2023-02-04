@@ -12,13 +12,15 @@ data class PurchaseInstalmentEntity(
     val unitPrice: Float,
     val ocrName: String,
     val storeName: String,
-    val productName: String
+    val productName: String,
+    val unitName: String,
 ){
     fun toModel() = UserProductInstalment(
         id = id,
         qty = qty,
         unitPrice = unitPrice,
         ocrName = ocrName,
-        storeName = storeName
+        storeName = storeName,
+        unitName = unitName
     )
 }

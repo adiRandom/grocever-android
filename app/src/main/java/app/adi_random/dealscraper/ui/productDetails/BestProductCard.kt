@@ -29,6 +29,6 @@ fun BestProductCard(product: ProductModel) {
             // TODO: Add Url
             Text(text = product.bestStore.name, color = Colors.TextPrimary)
         }
-        Text(text = "${product.bestPrice} RON / ${product.unitName}", color = Colors.TextPrimary)
+        Text(text = "${product.bestPrice} RON / ${product.purchaseInstalments[0].unitName}", color = Colors.TextPrimary)
     }
 }

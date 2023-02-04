@@ -20,14 +20,14 @@ class MockProductApi : ProductApi {
                                 unitPrice = 10.0f,
                                 ocrName = "Pr1",
                                 storeName = "Store X",
-                                id = 1
+                                id = 1,
+                                unitName = "kg"
                             )
                         ),
                         bestPrice = 5.0f,
                         bestStoreUrl = "https://www.google.com",
                         bestStoreName = "Store 1",
                         bestStoreId = 1,
-                        unitName = "kg"
                     ),
                     UserProductDto(
                         name = "Product 2",
@@ -37,7 +37,9 @@ class MockProductApi : ProductApi {
                                 id = 2,
                                 storeName = "Mega Image",
                                 qty = 1f,
-                                unitPrice = 20.0f
+                                unitPrice = 20.0f,
+                                unitName = "kg"
+
                             ),
                             UserProductInstalmentDto(
                                 qty = 1f,
@@ -45,13 +47,13 @@ class MockProductApi : ProductApi {
                                 ocrName = "Pr2",
                                 id = 3,
                                 storeName = "Store Z",
+                                unitName = "kg"
                             )
                         ),
                         bestPrice = 15.0f,
                         bestStoreUrl = "https://www.google.com",
                         bestStoreName = "Store 2",
                         bestStoreId = 2,
-                        unitName = "kg"
                     ),
                     UserProductDto(
                         name = "Product 3",
@@ -62,13 +64,13 @@ class MockProductApi : ProductApi {
                                 ocrName = "Pr3",
                                 id = 4,
                                 storeName = "Store X",
+                                unitName = "kg"
                             )
                         ),
                         bestPrice = 25.0f,
                         bestStoreUrl = "https://www.google.com",
                         bestStoreName = "Store 3",
                         bestStoreId = 3,
-                        unitName = "kg"
                     )
                 )
             ), ""

@@ -10,7 +10,6 @@ data class ProductEntity(
     @PrimaryKey
     val name: String,
     val bestPrice: Float,
-    val unitName: String,
     @Embedded
     val bestStore: StoreMetadataModel
 )

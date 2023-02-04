@@ -15,7 +15,6 @@ data class ProductWithPurchaseInstalmentsRelation(
     fun toModel() = ProductModel(
         name = product.name,
         bestPrice = product.bestPrice,
-        unitName = product.unitName,
         bestStore = product.bestStore,
         purchaseInstalments = purchaseInstalments.map { it.toModel() }
     )

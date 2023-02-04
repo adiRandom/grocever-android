@@ -7,13 +7,11 @@ data class ProductModel(
     val name: String,
     val bestPrice: Float,
     val purchaseInstalments: List<UserProductInstalment>,
-    val unitName: String,
     val bestStore: StoreMetadataModel
 ){
     fun toEntity() = ProductEntity(
         name = name,
         bestPrice = bestPrice,
-        unitName = unitName,
         bestStore = bestStore
     )
 }

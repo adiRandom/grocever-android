@@ -62,7 +62,7 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                 instalments.forEachIndexed { index, instalment ->
                     OcrProductInstalmentCell(
                         instalment = instalment,
-                        measureUnit = product?.unitName ?: "",
+                        measureUnit = instalment.unitName,
                         topRoundCorner = index == 0,
                         bottomRoundCorner = index == instalments.size - 1
                     )
