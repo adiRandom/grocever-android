@@ -34,7 +34,8 @@ class ProductDetailsViewModel(
                         unitPrice = key.second,
                         ocrName = ocrName,
                         storeName = key.first,
-                        id = instalmentsByStoreAndPrice.first().id
+                        id = instalmentsByStoreAndPrice.first().id,
+                        unitName = instalmentsByStoreAndPrice.first().unitName
                     )
                 }
             }?.toList()

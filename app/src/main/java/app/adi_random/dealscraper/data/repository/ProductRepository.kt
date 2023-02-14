@@ -16,7 +16,7 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
             emit(ResultWrapper.Success(productModels))
             saveProductList(productModels)
         } else {
-            emit(ResultWrapper.Error(apiResponse.error))
+            emit(ResultWrapper.Error(apiResponse.err))
         }
 
         emit(ResultWrapper.Loading(false))
