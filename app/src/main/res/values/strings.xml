@@ -21,6 +21,7 @@
     <string name="manually_add_quantity_hint">1</string>
     <string name="manually_add_unit_label">Unit</string>
     <string name="manually_add_btn">Add</string>
+    <string name="manually_add_img_btn">Add Image</string>
     <string name="manually_add_unit_kg">Kg</string>
     <string name="manually_add_unit_buc">Buc</string>
 </resources>

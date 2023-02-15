@@ -6,6 +6,7 @@ import androidx.room.Room.databaseBuilder
 import org.koin.dsl.module
 import app.adi_random.dealscraper.BuildConfig
 import app.adi_random.dealscraper.data.repository.AuthRepository
+import app.adi_random.dealscraper.data.repository.OcrProductRepository
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import retrofit2.Retrofit
 
@@ -39,5 +40,8 @@ val dataModule = module {
 
     single{
         ProductRepository(get(), get())
+    }
+    single{
+        OcrProductRepository(get())
     }
 }

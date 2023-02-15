@@ -1,5 +1,7 @@
 package app.adi_random.dealscraper.ui.productList
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -43,7 +46,16 @@ fun ProductList(
     viewModel.navigateToProductDetails.CollectAsEffect {
         navController.navigate(Routes.getProductDetailsRoute(it))
     }
+    val context = LocalContext.current
 
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            viewModel.onImagePicked(uri, context)
+        }
+
+    viewModel.shouldPickImageFromGallery.CollectAsEffect {
+        galleryLauncher.launch("image/*")
+    }
 
     LoadingScreen(isLoading = isLoading) {
         val scaffoldState = rememberScaffoldState()
@@ -59,7 +71,10 @@ fun ProductList(
         }
 
         BottomDrawer(drawerState = drawerState, drawerContent = {
-            AddProductBottomDrawerContent(unitStringResList = viewModel.addProductUnitList, onSubmit = viewModel::addProduct)
+            AddProductBottomDrawerContent(
+                unitStringResList = viewModel.addProductUnitList,
+                onSubmit = viewModel::addProduct, pickImage = viewModel::pickImage
+            )
         }) {
             Scaffold(
                 scaffoldState = scaffoldState,

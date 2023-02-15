@@ -30,4 +30,7 @@ val apiModule = module {
         get<Retrofit>().create(AuthApi::class.java)
 //        MockAuthApi()
     }
+    single<OcrProductApi> {
+        get<Retrofit>().create(OcrProductApi::class.java)
+    }
 }

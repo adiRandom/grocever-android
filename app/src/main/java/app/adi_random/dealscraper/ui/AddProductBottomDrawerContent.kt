@@ -19,6 +19,7 @@ import app.adi_random.dealscraper.data.models.ManualAddProductModel
 fun AddProductBottomDrawerContent(
     unitStringResList: List<Int> = emptyList(),
     onSubmit: (model: ManualAddProductModel) -> Unit,
+    pickImage: () -> Unit
 ) {
     var productName by remember { mutableStateOf("") }
     var productQty by remember { mutableStateOf("") }
@@ -146,20 +147,30 @@ fun AddProductBottomDrawerContent(
         )
     }
 
-    Button(
-        onClick = {
-            onSubmit(
-                ManualAddProductModel(
-                    productName,
-                    productPrice.toFloat(),
-                    productQty.toFloat(),
-                    productUnitStringRes
-                )
-            )
-        },
-        modifier = Modifier
-            .padding(12.dp, 0.dp, 12.dp, 24.dp)
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = stringResource(id = R.string.manually_add_btn))
+        Button(
+            onClick = {
+                onSubmit(
+                    ManualAddProductModel(
+                        productName,
+                        productPrice.toFloat(),
+                        productQty.toFloat(),
+                        productUnitStringRes
+                    )
+                )
+            },
+            modifier = Modifier
+                .padding(12.dp, 0.dp, 12.dp, 24.dp)
+        ) {
+            Text(text = stringResource(id = R.string.manually_add_btn))
+        }
+
+        TextButton(onClick = pickImage) {
+            Text(text = stringResource(id = R.string.manually_add_img_btn))
+        }
     }
+
 }

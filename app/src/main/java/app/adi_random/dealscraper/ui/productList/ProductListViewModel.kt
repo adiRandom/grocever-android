@@ -1,17 +1,32 @@
 package app.adi_random.dealscraper.ui.productList
 
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.ProductModel
+import app.adi_random.dealscraper.data.repository.OcrProductRepository
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import app.adi_random.dealscraper.data.repository.ResultWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
-class ProductListViewModel(private val productRepository: ProductRepository) : ViewModel() {
+
+class ProductListViewModel(
+    private val productRepository: ProductRepository,
+    private val ocrProductRepository: OcrProductRepository
+) : ViewModel() {
     private val _products = MutableStateFlow<List<ProductModel>>(emptyList())
     val products = _products
 
@@ -59,6 +74,9 @@ class ProductListViewModel(private val productRepository: ProductRepository) : V
         actual - best
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
+    private val _shouldPickImageFromGallery = MutableSharedFlow<Unit>()
+    val shouldPickImageFromGallery = _shouldPickImageFromGallery.asSharedFlow()
+
     fun getProducts() {
         viewModelScope.launch(Dispatchers.IO) {
             productRepository.getProductList().collect { result ->
@@ -105,7 +123,20 @@ class ProductListViewModel(private val productRepository: ProductRepository) : V
         }
     }
 
-    fun addProduct(model: ManualAddProductModel){
+    fun addProduct(model: ManualAddProductModel) {
         //TODO: Call repository to add product
+    }
+
+    fun pickImage() {
+        viewModelScope.launch {
+            _shouldPickImageFromGallery.emit(Unit)
+        }
+    }
+
+    fun onImagePicked(uri: Uri?, context: Context) {
+        uri?.let {
+            // Get file path from uri
+            ocrProductRepository.uploadImage(uri, context)
+        }
     }
 }
