@@ -77,6 +77,9 @@ class ProductListViewModel(
     private val _shouldPickImageFromGallery = MutableSharedFlow<Unit>()
     val shouldPickImageFromGallery = _shouldPickImageFromGallery.asSharedFlow()
 
+    private val _shouldCloseAddProductDialog = MutableSharedFlow<Unit>()
+    val shouldCloseAddProductDialog = _shouldCloseAddProductDialog.asSharedFlow()
+
     fun getProducts() {
         viewModelScope.launch(Dispatchers.IO) {
             productRepository.getProductList().collect { result ->
@@ -134,9 +137,19 @@ class ProductListViewModel(
     }
 
     fun onImagePicked(uri: Uri?, context: Context) {
-        uri?.let {
-            // Get file path from uri
-            ocrProductRepository.uploadImage(uri, context)
+        viewModelScope.launch {
+            uri?.let {
+                // Get file path from uri
+                ocrProductRepository.uploadImage(uri, context).collect() {
+                    when (it) {
+                        is ResultWrapper.Success -> {
+                            _shouldCloseAddProductDialog.emit(Unit)
+                        }
+                        is ResultWrapper.Error -> TODO()
+                        is ResultWrapper.Loading -> _isLoading.value = it.isLoading
+                    }
+                }
+            }
         }
     }
 }

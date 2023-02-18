@@ -39,6 +39,17 @@ fun ProductList(
     navController: NavHostController
 ) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scaffoldState = rememberScaffoldState()
+    val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            viewModel.onImagePicked(uri, context)
+        }
+
+
     LaunchedEffect(true) {
         viewModel.getProducts()
     }
@@ -46,21 +57,19 @@ fun ProductList(
     viewModel.navigateToProductDetails.CollectAsEffect {
         navController.navigate(Routes.getProductDetailsRoute(it))
     }
-    val context = LocalContext.current
 
-    val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            viewModel.onImagePicked(uri, context)
-        }
 
     viewModel.shouldPickImageFromGallery.CollectAsEffect {
         galleryLauncher.launch("image/*")
     }
 
+    viewModel.shouldCloseAddProductDialog.CollectAsEffect {
+        scope.launch {
+            drawerState.close()
+        }
+    }
+
     LoadingScreen(isLoading = isLoading) {
-        val scaffoldState = rememberScaffoldState()
-        val scope = rememberCoroutineScope()
-        val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
 
         val keyboardController = LocalSoftwareKeyboardController.current
         LaunchedEffect(drawerState.isOpen) {

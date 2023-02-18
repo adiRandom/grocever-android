@@ -8,7 +8,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val uiModule = module {
-    viewModel { ProductListViewModel(get()) }
+    viewModel { ProductListViewModel(get(), get()) }
     viewModel { AuthScreenViewModel(get()) }
     viewModel { NavigationViewModel(get()) }
     viewModel { (productName: String) ->

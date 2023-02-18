@@ -11,7 +11,7 @@ class AuthInterceptor(private val preferencesRepository: PreferencesRepository) 
         val token = preferencesRepository.getToken() ?: return chain.proceed(chain.request())
 
         val request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer $token").build()
-        return chain.proceed(request)
+                .addHeader("Authorization", "Bearer $token").build()
+                return chain.proceed(request)
     }
 }
