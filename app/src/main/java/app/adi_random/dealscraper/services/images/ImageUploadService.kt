@@ -64,6 +64,7 @@ class ImageUploadService(
     }
 
     suspend fun startService() {
+        // TODO: This if always passes. The return line in shouldStartService is never reached...but the if passes
         if(shouldStartService().not()){
             return
         }
@@ -76,7 +77,7 @@ class ImageUploadService(
             PeriodicWorkRequestBuilder<Worker>(12, TimeUnit.HOURS).setConstraints(constraints)
                 .build()
 
-        val workInfo = WorkManager.getInstance(ctx).enqueueUniquePeriodicWork(
+         WorkManager.getInstance(ctx).enqueueUniquePeriodicWork(
             UPLOAD_JOB_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             request
