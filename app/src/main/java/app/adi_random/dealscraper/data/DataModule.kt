@@ -6,8 +6,10 @@ import androidx.room.Room.databaseBuilder
 import org.koin.dsl.module
 import app.adi_random.dealscraper.BuildConfig
 import app.adi_random.dealscraper.data.repository.AuthRepository
+import app.adi_random.dealscraper.data.repository.GalleryRepository
 import app.adi_random.dealscraper.data.repository.OcrProductRepository
 import app.adi_random.dealscraper.data.repository.ProductRepository
+import org.koin.android.ext.koin.androidContext
 import retrofit2.Retrofit
 
 const val DB_NAME = "GROCEVER_DB"
@@ -43,5 +45,8 @@ val dataModule = module {
     }
     single{
         OcrProductRepository(get())
+    }
+    single{
+        GalleryRepository(androidContext().contentResolver)
     }
 }

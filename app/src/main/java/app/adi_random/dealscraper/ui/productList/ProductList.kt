@@ -1,5 +1,8 @@
 package app.adi_random.dealscraper.ui.productList
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -20,6 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.ui.AddProductBottomDrawerContent
@@ -49,6 +54,17 @@ fun ProductList(
             viewModel.onImagePicked(uri, context)
         }
 
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            if (permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true) {
+                viewModel.startUploadService()
+            } else {
+               ( context as? Activity)?.finish()
+            }
+        }
+
 
     LaunchedEffect(true) {
         viewModel.getProducts()
@@ -68,6 +84,11 @@ fun ProductList(
             drawerState.close()
         }
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.requestGalleryPermission(context, requestPermissionLauncher)
+    }
+
 
     LoadingScreen(isLoading = isLoading) {
 

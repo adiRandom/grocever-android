@@ -56,8 +56,8 @@ class AuthRepository(
         preferencesRepository.saveRefreshToken(authResponse.refresh)
     }
 
-    fun isLoggedIn(): Flow<Boolean> {
-        return authDao.getUserFlow().map { it != null }
+    fun isLoggedIn(): Boolean {
+        return authDao.getUser() != null
     }
 
     private fun deleteCurrentUser(){

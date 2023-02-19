@@ -25,25 +25,17 @@ object ImageUseCase {
 
 
     fun getFileFromImageUri(uri:Uri, ctx:Context): File{
-        val f = File(ctx.getCacheDir(), "temp");
+        val f = File(ctx.cacheDir, "temp");
         f.createNewFile();
 
         val invoiceBitmap = this.getBitmapFromUri(uri, ctx)
-        var bos = ByteArrayOutputStream()
+        val bos = ByteArrayOutputStream()
         invoiceBitmap?.compress(
             Bitmap.CompressFormat.JPEG,
             100 /*ignored for PNG*/,
             bos
         )
-        var bitmapdata = bos.toByteArray()
-
-        var quality = 99
-        while (bitmapdata.size > 4500000) {
-            bos = ByteArrayOutputStream()
-            invoiceBitmap?.compress(Bitmap.CompressFormat.JPEG, quality, bos)
-            bitmapdata = bos.toByteArray()
-            quality--
-        }
+        val bitmapdata = bos.toByteArray()
 
         // write the bytes in file
         val fos = FileOutputStream(f)

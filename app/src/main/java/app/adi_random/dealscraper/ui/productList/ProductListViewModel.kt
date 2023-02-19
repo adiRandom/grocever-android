@@ -1,32 +1,34 @@
 package app.adi_random.dealscraper.ui.productList
 
+import android.Manifest
 import android.content.Context
-import android.database.Cursor
+import android.content.pm.PackageManager
 import android.net.Uri
-import android.provider.MediaStore
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.*
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.ProductModel
+import app.adi_random.dealscraper.data.repository.GalleryRepository
 import app.adi_random.dealscraper.data.repository.OcrProductRepository
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import app.adi_random.dealscraper.data.repository.ResultWrapper
+import app.adi_random.dealscraper.services.images.ImageDetectionService
+import app.adi_random.dealscraper.services.images.ImageUploadService
+import app.adi_random.dealscraper.usecase.ImageUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 
+
+typealias GalleryPermissionLauncher = ManagedActivityResultLauncher<Array<String>, Map<String, @JvmSuppressWildcards Boolean>>
 
 class ProductListViewModel(
     private val productRepository: ProductRepository,
-    private val ocrProductRepository: OcrProductRepository
+    private val uploadService: ImageUploadService
 ) : ViewModel() {
+
     private val _products = MutableStateFlow<List<ProductModel>>(emptyList())
     val products = _products
 
@@ -79,6 +81,8 @@ class ProductListViewModel(
 
     private val _shouldCloseAddProductDialog = MutableSharedFlow<Unit>()
     val shouldCloseAddProductDialog = _shouldCloseAddProductDialog.asSharedFlow()
+
+    private var didRequestGalleryPermission = false
 
     fun getProducts() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -138,18 +142,51 @@ class ProductListViewModel(
 
     fun onImagePicked(uri: Uri?, context: Context) {
         viewModelScope.launch {
-            uri?.let {
-                // Get file path from uri
-                ocrProductRepository.uploadImage(uri, context).collect() {
-                    when (it) {
-                        is ResultWrapper.Success -> {
-                            _shouldCloseAddProductDialog.emit(Unit)
-                        }
-                        is ResultWrapper.Error -> TODO()
-                        is ResultWrapper.Loading -> _isLoading.value = it.isLoading
+            uploadService.uploadImage(uri, context).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        _shouldCloseAddProductDialog.emit(Unit)
                     }
+                    is ResultWrapper.Error -> TODO()
+                    is ResultWrapper.Loading -> _isLoading.value = result.isLoading
                 }
             }
         }
     }
+
+    fun startUploadService() {
+        viewModelScope.launch {
+            uploadService.startService()
+        }
+    }
+
+    fun requestGalleryPermission(
+        ctx: Context,
+        launcher: GalleryPermissionLauncher
+    ) {
+        if(didRequestGalleryPermission){
+            return
+        }
+
+        didRequestGalleryPermission = true
+
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) -> {
+                startUploadService()
+            }
+            else -> {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                launcher.launch(
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
+                )
+            }
+        }
+    }
+
 }

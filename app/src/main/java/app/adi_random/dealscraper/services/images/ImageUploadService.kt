@@ -1,0 +1,97 @@
+package app.adi_random.dealscraper.services.images
+
+import android.content.Context
+import android.net.Uri
+import androidx.lifecycle.viewModelScope
+import androidx.work.*
+import app.adi_random.dealscraper.data.repository.GalleryRepository
+import app.adi_random.dealscraper.data.repository.OcrProductRepository
+import app.adi_random.dealscraper.data.repository.ResultWrapper
+import app.adi_random.dealscraper.usecase.ImageUseCase
+import com.google.common.util.concurrent.ListenableFuture
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
+
+class ImageUploadService(
+    private val ctx: Context,
+    private val galleryRepository: GalleryRepository,
+    private val imageDetectionService: ImageDetectionService,
+    private val ocrProductRepository: OcrProductRepository
+) {
+
+    inner class Worker(
+        ctx: Context,
+        workerParameters: WorkerParameters,
+        private val uploadService: ImageUploadService
+    ) : CoroutineWorker(ctx, workerParameters) {
+        override suspend fun doWork(): Result {
+            return withContext(Dispatchers.IO) {
+                uploadService.findImagesAndUpload()
+                Result.success()
+            }
+        }
+    }
+
+    private suspend fun getAllImages(): List<Uri> {
+        return galleryRepository.getUnprocessedImagesUris().filter() { uri ->
+            ImageUseCase.getBitmapFromUri(uri, ctx)?.let { bitmap ->
+                val isImageOfInterest =
+                    imageDetectionService.isImageOfInterest(bitmap, ctx)
+
+                isImageOfInterest
+            } ?: false
+        }
+    }
+
+    fun uploadImage(uri: Uri?, context: Context): Flow<ResultWrapper<Unit>> {
+        return ocrProductRepository.uploadImage(uri, context)
+    }
+
+    private suspend fun uploadImageAndGetResult(uri: Uri?, context: Context): ResultWrapper<Unit> {
+        return ocrProductRepository.uploadImage(uri, context)
+            .first { it is ResultWrapper.Success || it is ResultWrapper.Error }
+    }
+
+    suspend fun findImagesAndUpload() {
+        getAllImages().forEach { uri ->
+            uploadImageAndGetResult(uri, ctx)
+            // TODO: Mark image as uploaded / mark image as ready to retry
+        }
+    }
+
+    suspend fun startService() {
+        if(shouldStartService().not()){
+            return
+        }
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val request =
+            PeriodicWorkRequestBuilder<Worker>(12, TimeUnit.HOURS).setConstraints(constraints)
+                .build()
+
+        val workInfo = WorkManager.getInstance(ctx).enqueueUniquePeriodicWork(
+            UPLOAD_JOB_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
+
+        // Also launch the job right now
+        findImagesAndUpload()
+    }
+
+    private suspend fun shouldStartService():Boolean {
+        val serviceInfo = WorkManager.getInstance(ctx).getWorkInfosByTag(UPLOAD_JOB_NAME).await()
+        return serviceInfo.isEmpty()
+    }
+
+    companion object {
+        private const val UPLOAD_JOB_NAME = "ImageUploadService"
+    }
+}

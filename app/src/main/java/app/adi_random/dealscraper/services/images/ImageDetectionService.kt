@@ -1,4 +1,4 @@
-package app.adi_random.dealscraper.services
+package app.adi_random.dealscraper.services.images
 
 import android.content.Context
 import android.graphics.Bitmap
