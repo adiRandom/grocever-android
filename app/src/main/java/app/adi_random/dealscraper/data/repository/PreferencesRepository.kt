@@ -19,8 +19,18 @@ class PreferencesRepository(private val sharedPreferences: SharedPreferences) {
         return sharedPreferences.getString(REFRESH_TOKEN, null)
     }
 
+    fun saveLastCheckedImageId(id: Long) {
+        sharedPreferences.edit().putLong(LAST_CHECKED_IMAGE_URI, id).apply()
+    }
+
+    fun getLastCheckedImageId(): Long? {
+        val id = sharedPreferences.getLong(LAST_CHECKED_IMAGE_URI, -1)
+        return if (id == -1L) null else id
+    }
+
     companion object {
         const val TOKEN = "token"
         const val REFRESH_TOKEN = "refreshToken"
+        const val LAST_CHECKED_IMAGE_URI = "lastCheckedImageUri"
     }
 }

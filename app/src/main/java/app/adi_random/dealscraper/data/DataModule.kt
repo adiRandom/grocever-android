@@ -24,6 +24,7 @@ val dataModule = module {
 
     fun provideAuthDao(db: AppDatabase) = db.authDao()
     fun provideProductDao(db: AppDatabase) = db.productDao()
+    fun provideRetryUploadDao(db: AppDatabase) = db.retryUploadDao()
 
 
     single {
@@ -31,6 +32,9 @@ val dataModule = module {
     }
     single {
         provideAuthDao(get())
+    }
+    single {
+        provideProductDao(get())
     }
     single {
         provideProductDao(get())
@@ -47,6 +51,6 @@ val dataModule = module {
         OcrProductRepository(get())
     }
     single{
-        GalleryRepository(androidContext().contentResolver)
+        GalleryRepository(androidContext().contentResolver, get(), get())
     }
 }

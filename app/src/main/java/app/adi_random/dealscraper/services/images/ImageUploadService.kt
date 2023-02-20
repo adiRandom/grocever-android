@@ -56,11 +56,26 @@ class ImageUploadService(
             .first { it is ResultWrapper.Success || it is ResultWrapper.Error }
     }
 
+    private suspend fun retryUploads() {
+        val retryUploads = galleryRepository.getRetryUploads()
+        retryUploads.forEach { uri ->
+            val result = uploadImageAndGetResult(uri, ctx)
+            if (result is ResultWrapper.Success) {
+                galleryRepository.removeRetryUpload(uri)
+            }
+        }
+    }
+
     suspend fun findImagesAndUpload() {
         getAllImages().forEach { uri ->
-            uploadImageAndGetResult(uri, ctx)
-            // TODO: Mark image as uploaded / mark image as ready to retry
+            val result = uploadImageAndGetResult(uri, ctx)
+
+            if (result is ResultWrapper.Error) {
+                galleryRepository.saveImageForRetry(uri)
+            }
         }
+
+        retryUploads()
     }
 
     suspend fun startService() {
