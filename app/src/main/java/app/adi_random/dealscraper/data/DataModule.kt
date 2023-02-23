@@ -34,7 +34,7 @@ val dataModule = module {
         provideAuthDao(get())
     }
     single {
-        provideProductDao(get())
+        provideRetryUploadDao(get())
     }
     single {
         provideProductDao(get())

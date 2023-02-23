@@ -15,7 +15,7 @@
     <string name="manually_add">Add a product</string>
     <string name="manually_add_name_label">Product name</string>
     <string name="manually_add_name_hint">Skimmed Milk</string>
-    <string name="manually_add_price_label">Price</string>
+    <string name="manually_add_price_label">Unit Price</string>
     <string name="manually_add_price_hint">2.99</string>
     <string name="manually_add_quantity_label">Quantity</string>
     <string name="manually_add_quantity_hint">1</string>

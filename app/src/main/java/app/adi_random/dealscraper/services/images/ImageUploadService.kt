@@ -57,11 +57,13 @@ class ImageUploadService(
     }
 
     private suspend fun retryUploads() {
-        val retryUploads = galleryRepository.getRetryUploads()
-        retryUploads.forEach { uri ->
-            val result = uploadImageAndGetResult(uri, ctx)
-            if (result is ResultWrapper.Success) {
-                galleryRepository.removeRetryUpload(uri)
+        withContext(Dispatchers.IO) {
+            val retryUploads = galleryRepository.getRetryUploads()
+            retryUploads.forEach { uri ->
+                val result = uploadImageAndGetResult(uri, ctx)
+                if (result is ResultWrapper.Success) {
+                    galleryRepository.removeRetryUpload(uri)
+                }
             }
         }
     }
