@@ -1,4 +1,4 @@
-package app.adi_random.dealscraper.data.dto
+package app.adi_random.dealscraper.data.dto.store
 
 import app.adi_random.dealscraper.data.repository.ResultWrapper
 

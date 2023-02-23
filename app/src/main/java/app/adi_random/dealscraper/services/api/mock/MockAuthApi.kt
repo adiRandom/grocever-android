@@ -1,6 +1,6 @@
 package app.adi_random.dealscraper.services.api.mock
 
-import app.adi_random.dealscraper.data.dto.ApiResponse
+import app.adi_random.dealscraper.data.dto.store.ApiResponse
 import app.adi_random.dealscraper.data.dto.auth.AuthResponse
 import app.adi_random.dealscraper.data.dto.auth.LoginDto
 import app.adi_random.dealscraper.data.dto.auth.RegisterDto

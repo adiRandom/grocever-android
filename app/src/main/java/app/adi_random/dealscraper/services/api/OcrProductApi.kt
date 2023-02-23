@@ -1,6 +1,6 @@
 package app.adi_random.dealscraper.services.api
 
-import app.adi_random.dealscraper.data.dto.ApiResponse
+import app.adi_random.dealscraper.data.dto.store.ApiResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Multipart
 import retrofit2.http.POST

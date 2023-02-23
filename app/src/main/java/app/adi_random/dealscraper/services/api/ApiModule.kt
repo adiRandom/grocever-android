@@ -33,4 +33,7 @@ val apiModule = module {
     single<OcrProductApi> {
         get<Retrofit>().create(OcrProductApi::class.java)
     }
+    single<StoreApi> {
+        get<Retrofit>().create(StoreApi::class.java)
+    }
 }

@@ -1,10 +1,9 @@
 package app.adi_random.dealscraper.services.api.mock
 
-import app.adi_random.dealscraper.data.dto.ApiResponse
+import app.adi_random.dealscraper.data.dto.store.ApiResponse
 import app.adi_random.dealscraper.data.dto.product.UserProductDto
 import app.adi_random.dealscraper.data.dto.product.UserProductInstalmentDto
 import app.adi_random.dealscraper.data.dto.product.UserProductListDto
-import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.services.api.ProductApi
 
 class MockProductApi : ProductApi {
