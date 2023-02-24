@@ -27,13 +27,13 @@ class ProductDetailsViewModel(
                 it.ocrName
             }?.mapValues { (ocrName, instalmentsByOcrName) ->
                 instalmentsByOcrName.groupBy { instalment ->
-                    Pair(instalment.storeName, instalment.unitPrice)
+                    Pair(instalment.store, instalment.unitPrice)
                 }.map { (key, instalmentsByStoreAndPrice) ->
                     UserProductInstalment(
                         qty = instalmentsByStoreAndPrice.sumOf { it.qty.toDouble() }.toFloat(),
                         unitPrice = key.second,
                         ocrName = ocrName,
-                        storeName = key.first,
+                        store = key.first,
                         id = instalmentsByStoreAndPrice.first().id,
                         unitName = instalmentsByStoreAndPrice.first().unitName
                     )

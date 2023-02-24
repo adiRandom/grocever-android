@@ -67,7 +67,7 @@ fun ProductList(
 
 
     LaunchedEffect(true) {
-        viewModel.getProducts()
+        viewModel.loadInitialData()
     }
 
     viewModel.navigateToProductDetails.CollectAsEffect {
@@ -100,9 +100,12 @@ fun ProductList(
             keyboardController?.hide()
         }
 
+        val stores by viewModel.storeMetadata.collectAsStateWithLifecycle()
+
         BottomDrawer(drawerState = drawerState, drawerContent = {
             AddProductBottomDrawerContent(
                 unitStringResList = viewModel.addProductUnitList,
+                stores = stores,
                 onSubmit = viewModel::addProduct, pickImage = viewModel::pickImage
             )
         }) {

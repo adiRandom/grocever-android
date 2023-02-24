@@ -7,14 +7,14 @@ data class UserProductInstalmentDto(
     val qty: Float,
     val unitPrice: Float,
     val ocrName: String,
-    val storeName: String,
+    val store: StoreMetadataDto,
     val unitName: String,
 ){
     fun toModel() = UserProductInstalment(
         qty = qty,
         unitPrice = unitPrice,
         ocrName = ocrName,
-        storeName = storeName,
+        store = store.toModel(),
         id = id,
         unitName = unitName
     )

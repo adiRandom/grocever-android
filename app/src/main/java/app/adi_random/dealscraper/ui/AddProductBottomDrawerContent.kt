@@ -15,11 +15,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
+import app.adi_random.dealscraper.data.models.StoreMetadataModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddProductBottomDrawerContent(
     unitStringResList: List<Int> = emptyList(),
+    stores: List<StoreMetadataModel> = emptyList(),
     onSubmit: (model: ManualAddProductModel) -> Unit,
     pickImage: () -> Unit
 ) {
@@ -27,6 +29,13 @@ fun AddProductBottomDrawerContent(
     var productQty by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }
     var productUnitStringRes by remember { mutableStateOf(R.string.manually_add_unit_buc) }
+    var selectedStoreId by remember { mutableStateOf(null as Int?) }
+    val defaultStoreLabel = stringResource(R.string.manually_add_store_label)
+    val selectedStoreName by remember {
+        derivedStateOf {
+            stores.find { it.id == selectedStoreId }?.name ?: defaultStoreLabel
+        }
+    }
 
 
     Text(
@@ -140,13 +149,44 @@ fun AddProductBottomDrawerContent(
             }
         }
 
-        // Invisible box to keep the layout consistent
         Box(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 24.dp)
-                .alpha(0f),
-        )
+                .padding(end = 24.dp)
+        ) {
+            var isExpanded by remember { mutableStateOf(false) }
+            ExposedDropdownMenuBox(
+                expanded = isExpanded,
+                onExpandedChange = { isExpanded = it },
+            ) {
+                TextField(
+                    value = selectedStoreName,
+                    onValueChange = {},
+                    label = { Text(text = stringResource(id = R.string.manually_add_store_label)) },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = isExpanded
+                        )
+                    },
+                    readOnly = true,
+                    colors = ExposedDropdownMenuDefaults.textFieldColors()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isExpanded,
+                    onDismissRequest = { isExpanded = false }) {
+                    stores.forEach { storeMetadata ->
+                        DropdownMenuItem(onClick = {
+                            selectedStoreId = storeMetadata.id
+                            isExpanded = false
+                        }) {
+                            Text(text = storeMetadata.name)
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     Row(

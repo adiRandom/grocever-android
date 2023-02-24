@@ -64,7 +64,7 @@ fun OcrProductInstalmentCell(
             )
         }
         Text(
-            text = "from ${instalment.storeName}",
+            text = "from ${instalment.store.name}",
             color = Colors.TextDisabled,
             fontSize = 12.sp
         )

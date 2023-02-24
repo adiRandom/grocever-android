@@ -1,7 +1,9 @@
 package app.adi_random.dealscraper.data.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import app.adi_random.dealscraper.data.models.StoreMetadataModel
 import app.adi_random.dealscraper.data.models.UserProductInstalment
 
 @Entity(tableName = "purchase_instalments")
@@ -11,7 +13,8 @@ data class PurchaseInstalmentEntity(
     val qty: Float,
     val unitPrice: Float,
     val ocrName: String,
-    val storeName: String,
+    @Embedded
+    val store: StoreMetadataModel,
     val productName: String,
     val unitName: String,
 ){
@@ -20,7 +23,7 @@ data class PurchaseInstalmentEntity(
         qty = qty,
         unitPrice = unitPrice,
         ocrName = ocrName,
-        storeName = storeName,
+        store = store,
         unitName = unitName
     )
 }

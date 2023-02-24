@@ -7,14 +7,14 @@ data class UserProductInstalment(
     val qty: Float,
     val unitPrice: Float,
     val ocrName: String,
-    val storeName: String,
+    val store: StoreMetadataModel,
     val unitName: String,
 ){
     fun toEntity(productName: String) = PurchaseInstalmentEntity(
         qty = qty,
         unitPrice = unitPrice,
         ocrName = ocrName,
-        storeName = storeName,
+        store = store,
         productName = productName,
         id = id,
         unitName = unitName

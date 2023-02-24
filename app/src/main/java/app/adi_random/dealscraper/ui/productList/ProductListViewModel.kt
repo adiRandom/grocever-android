@@ -10,10 +10,8 @@ import androidx.lifecycle.*
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.ProductModel
-import app.adi_random.dealscraper.data.repository.GalleryRepository
-import app.adi_random.dealscraper.data.repository.OcrProductRepository
-import app.adi_random.dealscraper.data.repository.ProductRepository
-import app.adi_random.dealscraper.data.repository.ResultWrapper
+import app.adi_random.dealscraper.data.models.StoreMetadataModel
+import app.adi_random.dealscraper.data.repository.*
 import app.adi_random.dealscraper.services.images.ImageDetectionService
 import app.adi_random.dealscraper.services.images.ImageUploadService
 import app.adi_random.dealscraper.usecase.ImageUseCase
@@ -26,7 +24,8 @@ typealias GalleryPermissionLauncher = ManagedActivityResultLauncher<Array<String
 
 class ProductListViewModel(
     private val productRepository: ProductRepository,
-    private val uploadService: ImageUploadService
+    private val uploadService: ImageUploadService,
+    private val storeRepository: StoreRepository,
 ) : ViewModel() {
 
     private val _products = MutableStateFlow<List<ProductModel>>(emptyList())
@@ -82,17 +81,36 @@ class ProductListViewModel(
     private val _shouldCloseAddProductDialog = MutableSharedFlow<Unit>()
     val shouldCloseAddProductDialog = _shouldCloseAddProductDialog.asSharedFlow()
 
+    private val _storeMetadata = MutableStateFlow<List<StoreMetadataModel>>(emptyList())
+    val storeMetadata = _storeMetadata.asStateFlow()
+
+
     private var didRequestGalleryPermission = false
 
-    fun getProducts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            productRepository.getProductList().collect { result ->
-                when (result) {
-                    is ResultWrapper.Success -> _products.value = result.data
-                    is ResultWrapper.Error -> TODO()
-                    is ResultWrapper.Loading -> _isLoading.value = result.isLoading
-                }
+    private suspend fun getProducts() {
+        productRepository.getProductList().collect { result ->
+            when (result) {
+                is ResultWrapper.Success -> _products.value = result.data
+                is ResultWrapper.Error -> TODO()
+                is ResultWrapper.Loading -> _isLoading.value = result.isLoading
             }
+        }
+    }
+
+    private suspend fun getStores() {
+        storeRepository.getStore().collect() { result ->
+            when (result) {
+                is ResultWrapper.Success -> _storeMetadata.value = result.data
+                is ResultWrapper.Error -> TODO()
+                is ResultWrapper.Loading -> _isLoading.value = result.isLoading
+            }
+        }
+    }
+
+    fun loadInitialData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getProducts()
+            getStores()
         }
     }
 
