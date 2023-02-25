@@ -28,12 +28,26 @@ fun AddProductBottomDrawerContent(
     var productName by remember { mutableStateOf("") }
     var productQty by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }
-    var productUnitStringRes by remember { mutableStateOf(R.string.manually_add_unit_buc) }
+
+    var productUnit by remember { mutableStateOf(null as String?) }
+    val defaultUniLabel = stringResource(R.string.manually_add_unit_buc)
+    val selectedUnitLabel by remember {
+        derivedStateOf {
+            productUnit ?: defaultUniLabel
+        }
+    }
+
     var selectedStoreId by remember { mutableStateOf(null as Int?) }
     val defaultStoreLabel = stringResource(R.string.manually_add_store_label)
     val selectedStoreName by remember {
         derivedStateOf {
             stores.find { it.id == selectedStoreId }?.name ?: defaultStoreLabel
+        }
+    }
+
+    val isFormValid by remember {
+        derivedStateOf {
+            productName.isNotBlank() && productQty.isNotBlank() && productPrice.isNotBlank() && productUnit != null && selectedStoreId != null
         }
     }
 
@@ -122,7 +136,7 @@ fun AddProductBottomDrawerContent(
                 onExpandedChange = { isExpanded = it },
             ) {
                 TextField(
-                    value = stringResource(id = productUnitStringRes),
+                    value = selectedUnitLabel,
                     onValueChange = {},
                     label = { Text(text = stringResource(id = R.string.manually_add_unit_label)) },
                     trailingIcon = {
@@ -138,11 +152,13 @@ fun AddProductBottomDrawerContent(
                     expanded = isExpanded,
                     onDismissRequest = { isExpanded = false }) {
                     unitStringResList.forEach { unitStringRes ->
+                        val unitLabel = stringResource(id = unitStringRes)
+
                         DropdownMenuItem(onClick = {
-                            productUnitStringRes = unitStringRes
+                            productUnit = unitLabel
                             isExpanded = false
                         }) {
-                            Text(text = stringResource(id = unitStringRes))
+                            Text(text = unitLabel)
                         }
                     }
                 }
@@ -194,13 +210,15 @@ fun AddProductBottomDrawerContent(
         modifier = Modifier.fillMaxWidth()
     ) {
         Button(
+            enabled = isFormValid,
             onClick = {
                 onSubmit(
                     ManualAddProductModel(
                         productName,
                         productPrice.toFloat(),
                         productQty.toFloat(),
-                        productUnitStringRes
+                        productUnit ?: "",
+                        selectedStoreId ?: 0
                     )
                 )
             },
@@ -214,5 +232,4 @@ fun AddProductBottomDrawerContent(
             Text(text = stringResource(id = R.string.manually_add_img_btn))
         }
     }
-
 }

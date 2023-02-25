@@ -2,7 +2,9 @@ package app.adi_random.dealscraper.data.repository
 
 import app.adi_random.dealscraper.data.dao.ProductDao
 import app.adi_random.dealscraper.data.entity.ProductWithPurchaseInstalmentsRelation
+import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.ProductModel
+import app.adi_random.dealscraper.data.models.UserProductInstalment
 import app.adi_random.dealscraper.services.api.ProductApi
 import kotlinx.coroutines.flow.flow
 
@@ -38,5 +40,22 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
     fun getProduct(name: String): ProductModel? {
         val product = dao.getProductByName(name)
         return product?.toModel()
+    }
+
+    fun createProduct(product: ManualAddProductModel) = flow {
+        emit(ResultWrapper.Loading(true))
+        val dto = product.toDto()
+        val apiResponse = api.addProduct(dto)
+        when (val result = apiResponse.toResultWrapper()) {
+            is ResultWrapper.Success -> {
+                val purchaseInstalmentModel = result.data.toModel()
+                emit(ResultWrapper.Success(purchaseInstalmentModel))
+            }
+            is ResultWrapper.Error -> emit(result)
+            else -> {
+                //do nothing
+            }
+        }
+        emit(ResultWrapper.Loading(false))
     }
 }

@@ -37,25 +37,9 @@ class ProductListViewModel(
     private val _navigateToProductDetails = MutableSharedFlow<String>()
     val navigateToProductDetails = _navigateToProductDetails.asSharedFlow()
 
-    private val _addProductName = MutableStateFlow("")
-    val addProductName = _addProductName.asStateFlow()
-
-    private val _addProductUnitPrice = MutableStateFlow(0f)
-    val addProductUnitPrice = _addProductUnitPrice.map { it.toString() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "")
-
-    private val _addProductQuantity = MutableStateFlow(0f)
-    val addProductQuantity = _addProductQuantity.map { it.toString() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "")
-
-    private val _addProductUnit = MutableStateFlow(R.string.manually_add_unit_buc)
-    val addProductUnit = _addProductUnit.asStateFlow()
-
     private val _hideKeyboard = MutableSharedFlow<Unit>()
     val hideKeyboard = _hideKeyboard.asSharedFlow()
 
-    private val _isAddProductUnitDropdownOpen = MutableStateFlow(false)
-    val isAddProductUnitDropdownOpen = _isAddProductUnitDropdownOpen.asStateFlow()
 
     val addProductUnitList = listOf(R.string.manually_add_unit_buc, R.string.manually_add_unit_kg)
 
@@ -114,21 +98,6 @@ class ProductListViewModel(
         }
     }
 
-    fun setAddProductName(name: String) {
-        _addProductName.value = name
-    }
-
-    fun setAddProductUnitPrice(price: String) {
-        _addProductUnitPrice.value = price.toFloat()
-    }
-
-    fun setAddProductQuantity(quantity: String) {
-        _addProductQuantity.value = quantity.toFloat()
-    }
-
-    fun setAddProductUnit(unitStringRes: Int) {
-        _addProductUnit.value = unitStringRes
-    }
 
     fun onDrawerOpenStateChange(isOpen: Boolean) {
         viewModelScope.launch {
@@ -138,9 +107,6 @@ class ProductListViewModel(
         }
     }
 
-    fun setIsAddProductUnitDropdownOpen(isOpen: Boolean) {
-        _isAddProductUnitDropdownOpen.value = isOpen
-    }
 
     fun navigateToProductDetails(productName: String) {
         viewModelScope.launch {
@@ -149,7 +115,18 @@ class ProductListViewModel(
     }
 
     fun addProduct(model: ManualAddProductModel) {
-        //TODO: Call repository to add product
+        viewModelScope.launch(Dispatchers.IO) {
+            productRepository.createProduct(model).collect() { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        _shouldCloseAddProductDialog.emit(Unit)
+                        // TODO: Show success message
+                    }
+                    is ResultWrapper.Error -> TODO()
+                    is ResultWrapper.Loading -> _isLoading.value = result.isLoading
+                }
+            }
+        }
     }
 
     fun pickImage() {
