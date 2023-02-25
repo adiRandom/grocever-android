@@ -152,7 +152,7 @@ fun AddProductBottomDrawerContent(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .padding(end = 24.dp)
+                .padding(start = 24.dp)
         ) {
             var isExpanded by remember { mutableStateOf(false) }
             ExposedDropdownMenuBox(

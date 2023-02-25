@@ -33,7 +33,7 @@ fun ProductListHeader(actualSpending: Float, savings: Float) {
             fontSize = 16.sp
         )
         Text(
-            "$actualSpending RON",
+            "${String.format("%.2f", actualSpending)} RON",
             color = Colors.TextOnPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold
@@ -67,7 +67,7 @@ fun ProductListHeader(actualSpending: Float, savings: Float) {
                     .padding(4.dp, 0.dp)
             )
             Text(
-                "$savings RON",
+                "${String.format("%.2f", savings)} RON",
                 color = Colors.TextOnPrimary,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.SemiBold

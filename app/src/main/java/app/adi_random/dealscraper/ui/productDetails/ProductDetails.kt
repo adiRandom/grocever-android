@@ -90,7 +90,7 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                 color = Colors.TextOnPrimary
             )
             Text(
-                text = "$savings RON",
+                text = "${String.format("%.2f", savings)} RON",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Colors.TextOnPrimary,

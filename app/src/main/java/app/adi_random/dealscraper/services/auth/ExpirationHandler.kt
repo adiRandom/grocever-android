@@ -1,7 +1,6 @@
 package app.adi_random.dealscraper.services.auth
 
 import app.adi_random.dealscraper.data.repository.AuthRepository
-import app.adi_random.dealscraper.services.api.AuthApi
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
