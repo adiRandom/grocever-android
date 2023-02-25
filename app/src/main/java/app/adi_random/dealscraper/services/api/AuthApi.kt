@@ -1,9 +1,9 @@
 package app.adi_random.dealscraper.services.api
 
+import app.adi_random.dealscraper.data.dto.auth.*
 import app.adi_random.dealscraper.data.dto.store.ApiResponse
-import app.adi_random.dealscraper.data.dto.auth.AuthResponse
-import app.adi_random.dealscraper.data.dto.auth.LoginDto
-import app.adi_random.dealscraper.data.dto.auth.RegisterDto
+import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -14,4 +14,7 @@ interface AuthApi {
 
     @POST("auth/register")
     suspend fun register(@Body body: RegisterDto): ApiResponse<AuthResponse>
+
+    @POST("/auth/refresh")
+    fun refresh(@Body body: RefreshDto): Call<ApiResponse<RefreshResponseDto>>
 }

@@ -2,6 +2,7 @@ package app.adi_random.dealscraper.services.auth
 
 import android.content.SharedPreferences
 import app.adi_random.dealscraper.data.repository.PreferencesRepository
+import app.adi_random.dealscraper.services.api.AuthApi
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Retrofit

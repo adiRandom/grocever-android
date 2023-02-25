@@ -1,26 +1,27 @@
 package app.adi_random.dealscraper.data.repository
 
 import app.adi_random.dealscraper.data.dao.AuthDao
-import app.adi_random.dealscraper.data.dto.auth.AuthResponse
-import app.adi_random.dealscraper.data.dto.auth.LoginDto
-import app.adi_random.dealscraper.data.dto.auth.RegisterDto
-import app.adi_random.dealscraper.data.dto.auth.UserDto
+import app.adi_random.dealscraper.data.dto.auth.*
 import app.adi_random.dealscraper.services.api.AuthApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import app.adi_random.dealscraper.ui.navigation.Routes
+import kotlinx.coroutines.flow.*
+import retrofit2.Retrofit
 
 class AuthRepository(
     private val authDao: AuthDao,
     private val preferencesRepository: PreferencesRepository,
     private val authApi: AuthApi
 ) {
-    fun login(username: String, password: String): Flow<ResultWrapper<Unit>> = flow{
+    private val _isLoggedIn: MutableStateFlow<Boolean> =
+        MutableStateFlow(preferencesRepository.getToken() != null)
+
+    val isLoggedIn: Flow<Boolean> = _isLoggedIn.asStateFlow()
+    fun login(username: String, password: String): Flow<ResultWrapper<Unit>> = flow {
         emit(ResultWrapper.Loading(true))
         val response = authApi.login(LoginDto(username, password))
         when (val result = response.toResultWrapper()) {
             is ResultWrapper.Success -> {
-               onSuccessLogin(result.data)
+                onSuccessLogin(result.data)
                 emit(ResultWrapper.Success(Unit))
             }
             is ResultWrapper.Error -> {
@@ -48,16 +49,45 @@ class AuthRepository(
         emit(ResultWrapper.Loading(false))
     }
 
+    /**
+     * Get new access token
+     */
+    fun refreshAccessToken(): String? {
+        val refreshToken = preferencesRepository.getRefreshToken() ?: return null
+        val accessToken = preferencesRepository.getToken() ?: return null
+        val response = authApi.refresh(RefreshDto(refreshToken, accessToken)).execute()
+        return when(val result = response.body()?.toResultWrapper()) {
+            is ResultWrapper.Success -> {
+                preferencesRepository.saveToken(result.data.accessToken)
+                result.data.accessToken
+            }
+            is ResultWrapper.Error -> {
+                logout()
+                null
+            }
+            else -> {
+                null
+            }
+        }
+    }
+
+    private fun logout() {
+        preferencesRepository.saveToken(null)
+        preferencesRepository.saveRefreshToken(null)
+        _isLoggedIn.value = false
+    }
+
     private fun onSuccessLogin(authResponse: AuthResponse) {
         val userEntity = authResponse.user.toModel().toEntity()
         authDao.saveUser(userEntity)
 
         preferencesRepository.saveToken(authResponse.accessToken)
         preferencesRepository.saveRefreshToken(authResponse.refresh)
+        _isLoggedIn.value = true
     }
 
     fun isLoggedIn(): Boolean {
-        return authDao.getUser() != null
+        return _isLoggedIn.value
     }
 
     private fun deleteCurrentUser(){
