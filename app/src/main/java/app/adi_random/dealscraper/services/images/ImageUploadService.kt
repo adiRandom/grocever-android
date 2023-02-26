@@ -56,8 +56,10 @@ class ImageUploadService(
     }
 
     private suspend fun uploadImageAndGetResult(uri: Uri?, context: Context): ResultWrapper<Unit> {
-        return ocrProductRepository.uploadImage(uri, context)
-            .first { it is ResultWrapper.Success || it is ResultWrapper.Error }
+        //TODO: Uncomment in production
+//        return ocrProductRepository.uploadImage(uri, context)
+//            .first { it is ResultWrapper.Success || it is ResultWrapper.Error }
+        return ResultWrapper.Success(Unit)
     }
 
     private suspend fun retryUploads() {
