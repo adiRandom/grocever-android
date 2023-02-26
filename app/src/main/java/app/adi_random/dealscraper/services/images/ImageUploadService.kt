@@ -1,6 +1,7 @@
 package app.adi_random.dealscraper.services.images
 
 import android.content.Context
+import android.media.Image
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import androidx.work.*
@@ -14,6 +15,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.getKoin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
 
 class ImageUploadService(
@@ -23,13 +27,13 @@ class ImageUploadService(
     private val ocrProductRepository: OcrProductRepository
 ) {
 
-    inner class Worker(
+    class Worker(
         ctx: Context,
         workerParameters: WorkerParameters,
-        private val uploadService: ImageUploadService
-    ) : CoroutineWorker(ctx, workerParameters) {
+    ) : KoinComponent, CoroutineWorker(ctx, workerParameters) {
         override suspend fun doWork(): Result {
             return withContext(Dispatchers.IO) {
+                val uploadService by inject<ImageUploadService>()
                 uploadService.findImagesAndUpload()
                 Result.success()
             }
@@ -82,7 +86,7 @@ class ImageUploadService(
 
     suspend fun startService() {
         // TODO: This if always passes. The return line in shouldStartService is never reached...but the if passes
-        if(shouldStartService().not()){
+        if (shouldStartService().not()) {
             return
         }
 
@@ -90,11 +94,12 @@ class ImageUploadService(
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
+
         val request =
             PeriodicWorkRequestBuilder<Worker>(12, TimeUnit.HOURS).setConstraints(constraints)
                 .build()
 
-         WorkManager.getInstance(ctx).enqueueUniquePeriodicWork(
+        WorkManager.getInstance(ctx).enqueueUniquePeriodicWork(
             UPLOAD_JOB_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             request
