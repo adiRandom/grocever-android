@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.compose.material.BottomDrawerState
+import androidx.compose.material.BottomDrawerValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import app.adi_random.dealscraper.R
@@ -14,8 +17,10 @@ import app.adi_random.dealscraper.data.models.StoreMetadataModel
 import app.adi_random.dealscraper.data.repository.*
 import app.adi_random.dealscraper.services.images.ImageDetectionService
 import app.adi_random.dealscraper.services.images.ImageUploadService
+import app.adi_random.dealscraper.ui.misc.InfoStatus
 import app.adi_random.dealscraper.usecase.ImageUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -69,6 +74,12 @@ class ProductListViewModel(
     private val _storeMetadata = MutableStateFlow<List<StoreMetadataModel>>(emptyList())
     val storeMetadata = _storeMetadata.asStateFlow()
 
+    private val _isBottomDrawerOpen = MutableSharedFlow<Boolean>()
+    val isBottomDrawerOpen = _isBottomDrawerOpen.asSharedFlow()
+
+
+    private val _infoMessage = MutableStateFlow<Pair<String, InfoStatus>>("" to InfoStatus.SUCCESS)
+    val infoMessage = _infoMessage.asStateFlow()
 
     private var didRequestGalleryPermission = false
 
@@ -188,6 +199,17 @@ class ProductListViewModel(
                     )
                 )
             }
+        }
+    }
+
+    fun showInfoMessage(message: Pair<String, InfoStatus>) {
+        viewModelScope.launch {
+            _infoMessage.emit(message)
+            _isBottomDrawerOpen.emit(true)
+            delay(3000)
+            _isBottomDrawerOpen.emit(false)
+            delay(500)
+            _infoMessage.emit("" to InfoStatus.SUCCESS)
         }
     }
 

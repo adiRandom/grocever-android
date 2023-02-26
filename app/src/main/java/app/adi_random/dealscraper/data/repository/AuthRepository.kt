@@ -91,9 +91,4 @@ class AuthRepository(
         return _isLoggedIn.value
     }
 
-    private fun deleteCurrentUser(){
-        authDao.deleteAll()
-    }
-
-
 }

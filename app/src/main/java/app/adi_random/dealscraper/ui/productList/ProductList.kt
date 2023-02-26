@@ -28,6 +28,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.ui.AddProductBottomDrawerContent
+import app.adi_random.dealscraper.ui.misc.InfoBottomSheet
+import app.adi_random.dealscraper.ui.misc.InfoStatus
 import app.adi_random.dealscraper.ui.misc.LoadingScreen
 import app.adi_random.dealscraper.ui.navigation.Routes
 import app.adi_random.dealscraper.usecase.CollectAsEffect
@@ -48,6 +50,7 @@ fun ProductList(
     val scaffoldState = rememberScaffoldState()
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val infoMessage by viewModel.infoMessage.collectAsStateWithLifecycle()
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -72,6 +75,17 @@ fun ProductList(
 
     viewModel.navigateToProductDetails.CollectAsEffect {
         navController.navigate(Routes.getProductDetailsRoute(it))
+    }
+
+    viewModel.isBottomDrawerOpen.CollectAsEffect {
+        scope.launch {
+            if (it) {
+                drawerState.open()
+
+            } else {
+                drawerState.close()
+            }
+        }
     }
 
 
@@ -103,11 +117,15 @@ fun ProductList(
         val stores by viewModel.storeMetadata.collectAsStateWithLifecycle()
 
         BottomDrawer(drawerState = drawerState, drawerContent = {
-            AddProductBottomDrawerContent(
-                unitStringResList = viewModel.addProductUnitList,
-                stores = stores,
-                onSubmit = viewModel::addProduct, pickImage = viewModel::pickImage
-            )
+            if (infoMessage.first != "") {
+                InfoBottomSheet(msg = infoMessage.first, status = infoMessage.second)
+            } else {
+                AddProductBottomDrawerContent(
+                    unitStringResList = viewModel.addProductUnitList,
+                    stores = stores,
+                    onSubmit = viewModel::addProduct, pickImage = viewModel::pickImage
+                )
+            }
         }) {
             Scaffold(
                 scaffoldState = scaffoldState,
@@ -129,8 +147,13 @@ fun ProductList(
                     val actualSpending by viewModel.actualSpending.collectAsStateWithLifecycle()
                     val savings by viewModel.savings.collectAsStateWithLifecycle()
                     val products by viewModel.products.collectAsStateWithLifecycle()
-                    ProductListHeader(actualSpending = actualSpending, savings = savings){
+                    ProductListHeader(actualSpending = actualSpending, savings = savings) {
                         viewModel.logout()
+                    }
+                    Button(onClick = {
+                        viewModel.showInfoMessage("This is a test message" to InfoStatus.SUCCESS)
+                    }) {
+                        Text(text = "Show")
                     }
                     LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
                         items(items = products, key = { it.name }) { product ->
