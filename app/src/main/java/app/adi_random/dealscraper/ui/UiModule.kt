@@ -10,7 +10,7 @@ import org.koin.dsl.module
 val uiModule = module {
     viewModel {
         ProductListViewModel(
-            get(), get(), storeRepository = get()
+            get(), get(), storeRepository = get(), authRepository = get()
         )
     }
     viewModel { AuthScreenViewModel(get()) }

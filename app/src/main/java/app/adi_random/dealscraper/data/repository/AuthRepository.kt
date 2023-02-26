@@ -71,10 +71,11 @@ class AuthRepository(
         }
     }
 
-    private fun logout() {
+    fun logout() {
         preferencesRepository.saveToken(null)
         preferencesRepository.saveRefreshToken(null)
         _isLoggedIn.value = false
+        authDao.deleteAll()
     }
 
     private fun onSuccessLogin(authResponse: AuthResponse) {

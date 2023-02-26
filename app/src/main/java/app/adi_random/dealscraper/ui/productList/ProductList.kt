@@ -129,7 +129,9 @@ fun ProductList(
                     val actualSpending by viewModel.actualSpending.collectAsStateWithLifecycle()
                     val savings by viewModel.savings.collectAsStateWithLifecycle()
                     val products by viewModel.products.collectAsStateWithLifecycle()
-                    ProductListHeader(actualSpending = actualSpending, savings = savings)
+                    ProductListHeader(actualSpending = actualSpending, savings = savings){
+                        viewModel.logout()
+                    }
                     LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
                         items(items = products, key = { it.name }) { product ->
                             ProductEntry(product = product) {

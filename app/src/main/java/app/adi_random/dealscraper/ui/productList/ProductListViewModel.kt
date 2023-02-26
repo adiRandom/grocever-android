@@ -26,6 +26,7 @@ class ProductListViewModel(
     private val productRepository: ProductRepository,
     private val uploadService: ImageUploadService,
     private val storeRepository: StoreRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _products = MutableStateFlow<List<ProductModel>>(emptyList())
@@ -152,6 +153,12 @@ class ProductListViewModel(
     fun startUploadService() {
         viewModelScope.launch {
             uploadService.startService()
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            authRepository.logout()
         }
     }
 
