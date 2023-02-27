@@ -5,11 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.data.models.ProductModel
+import app.adi_random.dealscraper.ui.text.HyperlinkText
 import app.adi_random.dealscraper.ui.theme.Colors
+import kotlin.math.roundToInt
 
 @Composable
 fun ProductEntry(product: ProductModel, openProductDetails: (String) -> Unit) {
@@ -21,6 +25,10 @@ fun ProductEntry(product: ProductModel, openProductDetails: (String) -> Unit) {
             acc
         }
     }
+
+    val discountPercentage =
+        ((worstPrice - product.bestPrice) / worstPrice * 100).roundToInt()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,20 +47,30 @@ fun ProductEntry(product: ProductModel, openProductDetails: (String) -> Unit) {
                 .fillMaxWidth()
                 .padding(0.dp, 8.dp, 0.dp, 0.dp)
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.Bottom) {
                 Text(
-                    text = worstPrice.toString(),
+                    text = "$worstPrice RON",
                     color = Colors.TextSecondary,
                     textDecoration = TextDecoration.LineThrough
                 )
                 Text(
-                    text = product.bestPrice.toString(),
+                    text = product.bestPrice.toString() + " RON",
                     color = Colors.Primary,
                     modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
                 )
+
+                if (worstPrice < product.bestPrice) {
+                    Text(
+                        text = "(-$discountPercentage%)",
+                        color = Colors.Discount,
+                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),
+                        fontSize = 12.sp
+                    )
+                }
+
             }
             // TODO: Add url
-            Text(text = "@${product.bestStore.name}", color = Colors.TextDisabled)
+            HyperlinkText(text = "@${product.bestStore.name}", link=product.url)
         }
     }
 }

@@ -12,7 +12,7 @@ import app.adi_random.dealscraper.data.entity.UserEntity
 
 
 @Database(
-    version = 4,
+    version = 5,
     entities = [UserEntity::class, ProductEntity::class, PurchaseInstalmentEntity::class, RetryUploadEntity::class]
 )
 abstract class AppDatabase : RoomDatabase() {

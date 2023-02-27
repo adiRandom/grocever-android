@@ -16,6 +16,7 @@ data class ProductWithPurchaseInstalmentsRelation(
         name = product.name,
         bestPrice = product.bestPrice,
         bestStore = product.bestStore,
-        purchaseInstalments = purchaseInstalments.map { it.toModel() }
+        purchaseInstalments = purchaseInstalments.map { it.toModel() },
+        url = product.url
     )
 }

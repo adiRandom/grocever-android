@@ -18,4 +18,5 @@ object Colors {
     val PrimaryLight = Color(0xFFAA72FA)
     val Secondary = Color(0xFF03DAC5)
     val TextOnPrimary = Color(0xFFFFFFFF)
+    val Discount = Color(0xFFE91E63)
 }

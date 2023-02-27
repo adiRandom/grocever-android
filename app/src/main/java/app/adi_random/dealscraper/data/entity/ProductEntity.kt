@@ -11,5 +11,6 @@ data class ProductEntity(
     val name: String,
     val bestPrice: Float,
     @Embedded
-    val bestStore: StoreMetadataModel
+    val bestStore: StoreMetadataModel,
+    val url: String
 )

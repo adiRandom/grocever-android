@@ -11,6 +11,7 @@ data class UserProductDto(
     val bestStoreId: Int,
     val bestStoreName: String,
     val bestStoreUrl: String,
+    val bestProductUrl: String
 ){
     fun toModel() = ProductModel(
         name = name,
@@ -20,6 +21,7 @@ data class UserProductDto(
             id = bestStoreId,
             name = bestStoreName,
             url = bestStoreUrl
-        )
+        ),
+        url = bestProductUrl
     )
 }
