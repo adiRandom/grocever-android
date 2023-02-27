@@ -22,10 +22,6 @@ import org.koin.androidx.compose.koinViewModel
 fun AuthScreen(viewModel: AuthScreenViewModel = koinViewModel(), navController: NavHostController) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
-    viewModel.navigateToMain.CollectAsEffect {
-        navController.navigate(Routes.PRODUCT_LIST)
-    }
-
     LoadingScreen(isLoading = isLoading) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

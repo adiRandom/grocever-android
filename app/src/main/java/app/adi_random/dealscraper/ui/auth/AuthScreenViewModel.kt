@@ -35,7 +35,6 @@ class AuthScreenViewModel(
     val isLoading = _isLoading.asStateFlow()
 
     private val _navigateToMain = MutableSharedFlow<Unit>()
-    val navigateToMain = _navigateToMain.asSharedFlow()
 
     fun setEmail(value: String) {
         _email.value = value
@@ -66,7 +65,6 @@ class AuthScreenViewModel(
                 when (result) {
                     is ResultWrapper.Success -> {
                         _navigateToMain.emit(Unit)
-                        toggleIsLogin()
                     }
                     is ResultWrapper.Error -> {
                         _error.value = result.msg
@@ -92,7 +90,6 @@ class AuthScreenViewModel(
                 when (result) {
                     is ResultWrapper.Success -> {
                         _navigateToMain.emit(Unit)
-                        toggleIsLogin()
                     }
                     is ResultWrapper.Error -> {
                         _error.value = result.msg
