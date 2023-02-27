@@ -150,11 +150,6 @@ fun ProductList(
                     ProductListHeader(actualSpending = actualSpending, savings = savings) {
                         viewModel.logout()
                     }
-                    Button(onClick = {
-                        viewModel.showInfoMessage("This is a test message" to InfoStatus.SUCCESS)
-                    }) {
-                        Text(text = "Show")
-                    }
                     LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
                         items(items = products, key = { it.name }) { product ->
                             ProductEntry(product = product) {

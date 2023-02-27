@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.R
@@ -27,7 +28,6 @@ fun InfoBottomSheet(msg: String, status: InfoStatus) {
             .fillMaxWidth()
             .padding(8.dp, 32.dp)
     ) {
-
         Image(
             painter =
             painterResource(
@@ -40,8 +40,7 @@ fun InfoBottomSheet(msg: String, status: InfoStatus) {
                     }
                 }
             ), contentDescription = "status_icon",
-            modifier = Modifier.size(48.dp)
-        )
-        Text(text = msg, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            modifier = Modifier.size(48.dp))
+        Text(text = msg, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
     }
 }

@@ -132,7 +132,7 @@ class ProductListViewModel(
                 when (result) {
                     is ResultWrapper.Success -> {
                         _shouldCloseAddProductDialog.emit(Unit)
-                        // TODO: Show success message
+                        showInfoMessage( "Product added. We'll work our magic to find you the best deal" to InfoStatus.SUCCESS)
                     }
                     is ResultWrapper.Error -> TODO()
                     is ResultWrapper.Loading -> _isLoading.value = result.isLoading
@@ -202,7 +202,7 @@ class ProductListViewModel(
         }
     }
 
-    fun showInfoMessage(message: Pair<String, InfoStatus>) {
+    private fun showInfoMessage(message: Pair<String, InfoStatus>) {
         viewModelScope.launch {
             _infoMessage.emit(message)
             _isBottomDrawerOpen.emit(true)
