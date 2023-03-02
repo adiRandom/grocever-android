@@ -37,8 +37,8 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
         dao.saveProducts(productEntities)
     }
 
-    fun getProduct(name: String): ProductModel? {
-        val product = dao.getProductByName(name)
+    fun getProduct(id: Int): ProductModel? {
+        val product = dao.getProductById(id)
         return product?.toModel()
     }
 

@@ -15,10 +15,10 @@ val uiModule = module {
     }
     viewModel { AuthScreenViewModel(get()) }
     viewModel { NavigationViewModel(get()) }
-    viewModel { (productName: String) ->
+    viewModel { (productId: Int) ->
         ProductDetailsViewModel(
             productRepository = get(),
-            productName = productName,
+            productId = productId,
         )
     }
 }

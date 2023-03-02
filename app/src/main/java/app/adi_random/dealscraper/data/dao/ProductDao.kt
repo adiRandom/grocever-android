@@ -40,8 +40,7 @@ abstract class ProductDao {
         deleteAllPurchaseInstalments()
     }
 
-    @Query("SELECT * FROM products WHERE name = :name")
+    @Query("SELECT * FROM products WHERE id = :id")
     @Transaction
-    abstract fun getProductByName(name: String): ProductWithPurchaseInstalmentsRelation?
-
+    abstract fun getProductById(id: Int): ProductWithPurchaseInstalmentsRelation?
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
     private val productRepository: ProductRepository,
-    private val productName: String
+    private val productId: Int
 ) : ViewModel() {
     private val _product = MutableStateFlow<ProductModel?>(null)
     val product = _product.asStateFlow()
@@ -57,7 +57,7 @@ class ProductDetailsViewModel(
 
     private fun getProduct() {
         viewModelScope.launch(Dispatchers.IO) {
-            val res = productRepository.getProduct(productName)
+            val res = productRepository.getProduct(productId)
             _product.value = res
         }
     }

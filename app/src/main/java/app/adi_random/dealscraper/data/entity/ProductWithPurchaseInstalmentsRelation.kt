@@ -13,10 +13,12 @@ data class ProductWithPurchaseInstalmentsRelation(
     val purchaseInstalments: List<PurchaseInstalmentEntity>
 ){
     fun toModel() = ProductModel(
+        id = product.id,
         name = product.name,
         bestPrice = product.bestPrice,
         bestStore = product.bestStore,
         purchaseInstalments = purchaseInstalments.map { it.toModel() },
-        url = product.url
+        url = product.url,
+        imageUrl = product.imageUrl
     )
 }

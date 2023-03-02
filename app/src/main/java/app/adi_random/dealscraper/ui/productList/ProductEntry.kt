@@ -1,5 +1,6 @@
 package app.adi_random.dealscraper.ui.productList
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,10 +14,11 @@ import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.ui.text.HyperlinkText
 import app.adi_random.dealscraper.ui.theme.Colors
+import coil.compose.AsyncImage
 import kotlin.math.roundToInt
 
 @Composable
-fun ProductEntry(product: ProductModel, openProductDetails: (String) -> Unit) {
+fun ProductEntry(product: ProductModel, openProductDetails: (Int) -> Unit) {
     val worstPrice = product.purchaseInstalments.fold(0f) { acc, instalment ->
         val price = instalment.qty * instalment.unitPrice
         if (price > acc) {
@@ -29,48 +31,56 @@ fun ProductEntry(product: ProductModel, openProductDetails: (String) -> Unit) {
     val discountPercentage =
         ((worstPrice - product.bestPrice) / worstPrice * 100).roundToInt()
 
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .background(color = Colors.Background)
             .clickable {
-                openProductDetails(product.name)
+                openProductDetails(product.id)
             }
     ) {
-        Row {
-            Text(text = product.name, color = Colors.TextPrimary)
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp, 8.dp, 0.dp, 0.dp)
+        AsyncImage(
+            model = product.imageUrl,
+            contentDescription = "product image",
+            modifier = Modifier.size(96.dp)
+        )
+        Column(
+            modifier = Modifier.padding(horizontal = 8.dp),
         ) {
-            Row(verticalAlignment = Alignment.Bottom) {
-                Text(
-                    text = "$worstPrice RON",
-                    color = Colors.TextSecondary,
-                    textDecoration = TextDecoration.LineThrough
-                )
-                Text(
-                    text = product.bestPrice.toString() + " RON",
-                    color = Colors.Primary,
-                    modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
-                )
-
-                if (worstPrice < product.bestPrice) {
-                    Text(
-                        text = "(-$discountPercentage%)",
-                        color = Colors.Discount,
-                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),
-                        fontSize = 12.sp
-                    )
-                }
-
+            Row {
+                Text(text = product.name, color = Colors.TextPrimary)
             }
-            // TODO: Add url
-            HyperlinkText(text = "@${product.bestStore.name}", link=product.url)
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 8.dp, 0.dp, 0.dp)
+            ) {
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        text = "$worstPrice RON",
+                        color = Colors.TextSecondary,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                    Text(
+                        text = product.bestPrice.toString() + " RON",
+                        color = Colors.Primary,
+                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
+                    )
+
+                    if (worstPrice < product.bestPrice) {
+                        Text(
+                            text = "(-$discountPercentage%)",
+                            color = Colors.Discount,
+                            modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),
+                            fontSize = 12.sp
+                        )
+                    }
+
+                }
+                HyperlinkText(text = "@${product.bestStore.name}", link = product.url)
+            }
         }
     }
 }

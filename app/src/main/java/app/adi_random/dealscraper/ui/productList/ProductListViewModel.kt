@@ -40,7 +40,7 @@ class ProductListViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading
 
-    private val _navigateToProductDetails = MutableSharedFlow<String>()
+    private val _navigateToProductDetails = MutableSharedFlow<Int>()
     val navigateToProductDetails = _navigateToProductDetails.asSharedFlow()
 
     private val _hideKeyboard = MutableSharedFlow<Unit>()
@@ -120,9 +120,9 @@ class ProductListViewModel(
     }
 
 
-    fun navigateToProductDetails(productName: String) {
+    fun navigateToProductDetails(productId: Int) {
         viewModelScope.launch {
-            _navigateToProductDetails.emit(productName)
+            _navigateToProductDetails.emit(productId)
         }
     }
 

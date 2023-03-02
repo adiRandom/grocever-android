@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import app.adi_random.dealscraper.ui.auth.AuthScreen
 import app.adi_random.dealscraper.ui.productDetails.ProductDetails
 import app.adi_random.dealscraper.ui.productList.ProductList
@@ -28,9 +30,13 @@ fun Navigation(viewModel: NavigationViewModel = koinViewModel()) {
         composable(Routes.PRODUCT_LIST) {
             ProductList(navController = navController)
         }
-        composable(Routes.PRODUCT_DETAILS) {
-            val productName = it.arguments?.getString("productName")
-            ProductDetails(viewModel = getViewModel { parametersOf(productName) })
+        composable(
+            Routes.PRODUCT_DETAILS,
+            arguments = listOf(navArgument(Routes.PRODUCT_ID_ARG) { type = NavType.IntType })
+        )
+        {
+            val productId = it.arguments?.getInt(Routes.PRODUCT_ID_ARG)
+            ProductDetails(viewModel = getViewModel { parametersOf(productId) })
         }
     }
 }
