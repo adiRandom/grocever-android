@@ -17,12 +17,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
@@ -150,10 +153,22 @@ fun ProductList(
                     ProductListHeader(actualSpending = actualSpending, savings = savings) {
                         viewModel.logout()
                     }
-                    LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
-                        items(items = products, key = { it.name }) { product ->
-                            ProductEntry(product = product) {
-                                viewModel.navigateToProductDetails(it)
+
+                    if (products.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Text(
+                                text = "No products added yet",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                    } else {
+                        LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
+                            items(items = products, key = { it.name }) { product ->
+                                ProductEntry(product = product) {
+                                    viewModel.navigateToProductDetails(it)
+                                }
                             }
                         }
                     }
