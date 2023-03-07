@@ -61,4 +61,10 @@ class ProductDetailsViewModel(
             _product.value = res
         }
     }
+
+    fun onReport(ocrProductName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            productRepository.reportMissLink(productId, ocrProductName)
+        }
+    }
 }

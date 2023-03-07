@@ -58,4 +58,9 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
         }
         emit(ResultWrapper.Loading(false))
     }
+
+    suspend fun reportMissLink(productId: Int, ocrProductName: String) {
+        TODO()
+    }
+
 }
