@@ -1,6 +1,7 @@
 package app.adi_random.dealscraper.services.api
 
 import app.adi_random.dealscraper.data.dto.product.CreateProductDot
+import app.adi_random.dealscraper.data.dto.product.ReportMissLinkDto
 import app.adi_random.dealscraper.data.dto.product.UserProductInstalmentDto
 import app.adi_random.dealscraper.data.dto.store.ApiResponse
 import app.adi_random.dealscraper.data.dto.product.UserProductListDto
@@ -17,4 +18,8 @@ interface ProductApi {
     @POST("/product")
     suspend fun addProduct(@Body product: CreateProductDot):
             ApiResponse<UserProductInstalmentDto>
+
+    @POST("/product/report")
+    suspend fun reportMissLink(@Body dto: ReportMissLinkDto):
+            ApiResponse<Unit>
 }

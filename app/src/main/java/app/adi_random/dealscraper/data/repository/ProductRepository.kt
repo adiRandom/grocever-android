@@ -1,6 +1,7 @@
 package app.adi_random.dealscraper.data.repository
 
 import app.adi_random.dealscraper.data.dao.ProductDao
+import app.adi_random.dealscraper.data.dto.product.ReportMissLinkDto
 import app.adi_random.dealscraper.data.entity.ProductWithPurchaseInstalmentsRelation
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.ProductModel
@@ -60,7 +61,8 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
     }
 
     suspend fun reportMissLink(productId: Int, ocrProductName: String) {
-        TODO()
+        val dto = ReportMissLinkDto(productId, ocrProductName)
+        api.reportMissLink(dto)
     }
 
 }
