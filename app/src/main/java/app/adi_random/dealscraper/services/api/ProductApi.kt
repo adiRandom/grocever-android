@@ -22,4 +22,8 @@ interface ProductApi {
     @POST("/product/report")
     suspend fun reportMissLink(@Body dto: ReportMissLinkDto):
             ApiResponse<Unit>
+
+    @GET("/product/report/list")
+    suspend fun getReportedProducts():
+            ApiResponse<List<ReportMissLinkDto>>
 }

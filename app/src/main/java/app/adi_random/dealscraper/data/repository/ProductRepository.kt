@@ -65,4 +65,9 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
         api.reportMissLink(dto)
     }
 
+    suspend fun getReportedProducts(): List<ReportMissLinkDto> {
+        val apiResponse = api.getReportedProducts()
+        return apiResponse.body
+    }
+
 }

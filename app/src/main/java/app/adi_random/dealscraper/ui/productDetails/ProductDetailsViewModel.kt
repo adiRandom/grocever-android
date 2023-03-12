@@ -17,8 +17,19 @@ class ProductDetailsViewModel(
     private val _product = MutableStateFlow<ProductModel?>(null)
     val product = _product.asStateFlow()
 
-    init{
+    private val reportedOcrProductNames = MutableStateFlow<List<String>>(emptyList())
+
+    val reportableOrcProductNames = product.map { product ->
+        (product?.purchaseInstalments ?: emptyList()).map { it.ocrName }
+    }.combine(reportedOcrProductNames) { orcNames, reportedNames ->
+        orcNames.filter { ocrProductName ->
+            reportedNames.contains(ocrProductName).not()
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    init {
         getProduct()
+        getReportableOrcProductNames()
     }
 
     val productInstalmentsByOcrName =
@@ -62,9 +73,17 @@ class ProductDetailsViewModel(
         }
     }
 
+    private fun getReportableOrcProductNames() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val res = productRepository.getReportedProducts()
+            reportedOcrProductNames.value = res.map { it.ocrProductName }
+        }
+    }
+
     fun onReport(ocrProductName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             productRepository.reportMissLink(productId, ocrProductName)
+            reportedOcrProductNames.value = reportedOcrProductNames.value + ocrProductName
         }
     }
 }

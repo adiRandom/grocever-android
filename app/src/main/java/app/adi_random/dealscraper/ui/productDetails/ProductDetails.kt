@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 fun ProductDetails(viewModel: ProductDetailsViewModel) {
     val productInstalmentsByOcrName by viewModel.productInstalmentsByOcrName.collectAsStateWithLifecycle()
     val product by viewModel.product.collectAsStateWithLifecycle()
+    val reportableOcrProducts by viewModel.reportableOrcProductNames.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
@@ -45,13 +46,14 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
     BottomDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ReportModalContent(ocrProductNames = productInstalmentsByOcrName?.map { it.first }
-                ?: emptyList(), onReport = { ocrProductName ->
-                viewModel.onReport(ocrProductName)
-                scope.launch {
-                    drawerState.close()
-                }
-            })
+            ReportModalContent(
+                ocrProductNames = reportableOcrProducts,
+                onReport = { ocrProductName ->
+                    scope.launch {
+                        drawerState.close()
+                    }
+                    viewModel.onReport(ocrProductName)
+                })
         },
     ) {
         Column(Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)) {
@@ -124,17 +126,19 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                     }
                 }
 
-                IconButton(
-                    onClick = { scope.launch { drawerState.open() } },
-                    modifier = Modifier.align(Alignment.TopEnd)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_report_problem),
-                        contentDescription = "Report",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.Center)
-                    )
+                if (reportableOcrProducts.isNotEmpty()) {
+                    IconButton(
+                        onClick = { scope.launch { drawerState.open() } },
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_report_problem),
+                            contentDescription = "Report",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
                 }
             }
         }
