@@ -10,6 +10,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import app.adi_random.dealscraper.MainComposeActivity
+import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.dto.notification.SetFcmTokenDto
 import app.adi_random.dealscraper.services.api.NotificationApi
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -59,6 +60,7 @@ class NotificationReceiverService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
