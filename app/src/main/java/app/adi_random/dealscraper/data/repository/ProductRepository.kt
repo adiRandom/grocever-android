@@ -5,6 +5,7 @@ import app.adi_random.dealscraper.data.dto.product.ReportMissLinkDto
 import app.adi_random.dealscraper.data.entity.ProductWithPurchaseInstalmentsRelation
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.ProductModel
+import app.adi_random.dealscraper.data.models.ReportMissLinkModel
 import app.adi_random.dealscraper.data.models.UserProductInstalment
 import app.adi_random.dealscraper.services.api.ProductApi
 import kotlinx.coroutines.flow.flow
@@ -65,9 +66,9 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
         api.reportMissLink(dto)
     }
 
-    suspend fun getReportedProducts(): List<ReportMissLinkDto> {
+    suspend fun getReportedProducts(): List<ReportMissLinkModel> {
         val apiResponse = api.getReportedProducts()
-        return apiResponse.body
+        return apiResponse.body.map { it.toModel() }
     }
 
 }

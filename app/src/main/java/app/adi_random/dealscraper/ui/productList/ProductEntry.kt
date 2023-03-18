@@ -51,30 +51,33 @@ fun ProductEntry(product: ProductModel, openProductDetails: (Int) -> Unit) {
             Row {
                 Text(text = product.name, color = Colors.TextPrimary)
             }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(0.dp, 8.dp, 0.dp, 0.dp)
             ) {
                 Row(verticalAlignment = Alignment.Bottom) {
-                    Text(
-                        text = "$worstPrice RON",
-                        color = Colors.TextSecondary,
-                        textDecoration = TextDecoration.LineThrough
-                    )
-                    Text(
-                        text = product.bestPrice.toString() + " RON",
-                        color = Colors.Primary,
-                        modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
-                    )
-
-                    if (worstPrice < product.bestPrice) {
+                    if (worstPrice > product.bestPrice) {
+                        Text(
+                            text = "$worstPrice RON",
+                            color = Colors.TextSecondary,
+                            textDecoration = TextDecoration.LineThrough
+                        )
+                        Text(
+                            text = product.bestPrice.toString() + " RON",
+                            color = Colors.Primary,
+                            modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
+                        )
                         Text(
                             text = "(-$discountPercentage%)",
                             color = Colors.Discount,
                             modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp),
                             fontSize = 12.sp
+                        )
+                    } else {
+                        Text(
+                            text = "$worstPrice RON",
+                            color = Colors.TextSecondary,
                         )
                     }
 

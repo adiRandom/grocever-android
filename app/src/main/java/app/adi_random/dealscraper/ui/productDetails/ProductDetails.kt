@@ -74,20 +74,22 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                 items(
                     items = productInstalmentsByOcrName ?: emptyList(),
                     key = { it.first }) { (ocrName, instalments) ->
-                    Text(
-                        text = ocrName,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontStyle = FontStyle.Italic,
-                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
-                    )
-                    instalments.forEachIndexed { index, instalment ->
-                        OcrProductInstalmentCell(
-                            instalment = instalment,
-                            measureUnit = instalment.unitName,
-                            topRoundCorner = index == 0,
-                            bottomRoundCorner = index == instalments.size - 1
+                    Column(modifier = Modifier.padding(0.dp, 8.dp)) {
+                        Text(
+                            text = ocrName,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontStyle = FontStyle.Italic,
+                            modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
                         )
+                        instalments.forEachIndexed { index, instalment ->
+                            OcrProductInstalmentCell(
+                                instalment = instalment,
+                                measureUnit = instalment.unitName,
+                                topRoundCorner = index == 0,
+                                bottomRoundCorner = index == instalments.size - 1
+                            )
+                        }
                     }
                 }
             }

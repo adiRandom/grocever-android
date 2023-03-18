@@ -13,7 +13,7 @@ val uiModule = module {
             get(), get(), storeRepository = get(), authRepository = get()
         )
     }
-    viewModel { AuthScreenViewModel(get()) }
+    viewModel { AuthScreenViewModel(get(), get()) }
     viewModel { NavigationViewModel(get()) }
     viewModel { (productId: Int) ->
         ProductDetailsViewModel(

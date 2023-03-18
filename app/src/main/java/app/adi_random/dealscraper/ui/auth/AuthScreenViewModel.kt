@@ -6,6 +6,7 @@ import app.adi_random.dealscraper.data.dto.auth.LoginDto
 import app.adi_random.dealscraper.data.repository.AuthRepository
 import app.adi_random.dealscraper.data.repository.ResultWrapper
 import app.adi_random.dealscraper.services.api.AuthApi
+import app.adi_random.dealscraper.services.notifications.TokenService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AuthScreenViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val tokenService: TokenService
 ) : ViewModel() {
     private val _email = MutableStateFlow("")
     val email = _email.asStateFlow()
@@ -65,6 +67,7 @@ class AuthScreenViewModel(
                 when (result) {
                     is ResultWrapper.Success -> {
                         _navigateToMain.emit(Unit)
+                        onSuccessAuth()
                     }
                     is ResultWrapper.Error -> {
                         _error.value = result.msg
@@ -75,6 +78,10 @@ class AuthScreenViewModel(
                 }
             }
         }
+    }
+
+    private fun onSuccessAuth(){
+        tokenService.updateFcmToken(viewModelScope)
     }
 
     fun register() {
@@ -90,6 +97,7 @@ class AuthScreenViewModel(
                 when (result) {
                     is ResultWrapper.Success -> {
                         _navigateToMain.emit(Unit)
+                        onSuccessAuth()
                     }
                     is ResultWrapper.Error -> {
                         _error.value = result.msg

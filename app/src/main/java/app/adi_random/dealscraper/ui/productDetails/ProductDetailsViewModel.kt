@@ -3,7 +3,9 @@ package app.adi_random.dealscraper.ui.productDetails
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.adi_random.dealscraper.data.dto.product.ReportMissLinkDto
 import app.adi_random.dealscraper.data.models.ProductModel
+import app.adi_random.dealscraper.data.models.ReportMissLinkModel
 import app.adi_random.dealscraper.data.models.UserProductInstalment
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import kotlinx.coroutines.Dispatchers
@@ -17,14 +19,14 @@ class ProductDetailsViewModel(
     private val _product = MutableStateFlow<ProductModel?>(null)
     val product = _product.asStateFlow()
 
-    private val reportedOcrProductNames = MutableStateFlow<List<String>>(emptyList())
+    private val reportedProductLinks = MutableStateFlow<List<ReportMissLinkModel>>(emptyList())
 
     val reportableOrcProductNames = product.map { product ->
         (product?.purchaseInstalments ?: emptyList()).map { it.ocrName }
-    }.combine(reportedOcrProductNames) { orcNames, reportedNames ->
+    }.combine(reportedProductLinks) { orcNames, missLinks ->
         orcNames.filter { ocrProductName ->
-            reportedNames.contains(ocrProductName).not()
-        }
+            missLinks.contains(ReportMissLinkModel(productId, ocrProductName)).not()
+        }.toSet().toList()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     init {
@@ -32,7 +34,7 @@ class ProductDetailsViewModel(
         getReportableOrcProductNames()
     }
 
-    val productInstalmentsByOcrName =
+    val  productInstalmentsByOcrName =
         product.map { productModel ->
             productModel?.purchaseInstalments?.groupBy {
                 it.ocrName
@@ -75,15 +77,14 @@ class ProductDetailsViewModel(
 
     private fun getReportableOrcProductNames() {
         viewModelScope.launch(Dispatchers.IO) {
-            val res = productRepository.getReportedProducts()
-            reportedOcrProductNames.value = res.map { it.ocrProductName }
+            reportedProductLinks.value= productRepository.getReportedProducts()
         }
     }
 
     fun onReport(ocrProductName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             productRepository.reportMissLink(productId, ocrProductName)
-            reportedOcrProductNames.value = reportedOcrProductNames.value + ocrProductName
+            reportedProductLinks.value = reportedProductLinks.value + ReportMissLinkModel(productId, ocrProductName)
         }
     }
 }

@@ -3,6 +3,7 @@ package app.adi_random.dealscraper.data.repository
 import app.adi_random.dealscraper.data.dao.AuthDao
 import app.adi_random.dealscraper.data.dto.auth.*
 import app.adi_random.dealscraper.services.api.AuthApi
+import app.adi_random.dealscraper.services.api.NotificationApi
 import app.adi_random.dealscraper.ui.navigation.Routes
 import kotlinx.coroutines.flow.*
 import retrofit2.Retrofit
@@ -10,7 +11,7 @@ import retrofit2.Retrofit
 class AuthRepository(
     private val authDao: AuthDao,
     private val preferencesRepository: PreferencesRepository,
-    private val authApi: AuthApi
+    private val authApi: AuthApi,
 ) {
     private val _isLoggedIn: MutableStateFlow<Boolean> =
         MutableStateFlow(preferencesRepository.getToken() != null)

@@ -48,4 +48,7 @@ val apiModule = module {
     single<StoreApi> {
         get<Retrofit>().create(StoreApi::class.java)
     }
+    single<NotificationApi> {
+        get<Retrofit>().create(NotificationApi::class.java)
+    }
 }

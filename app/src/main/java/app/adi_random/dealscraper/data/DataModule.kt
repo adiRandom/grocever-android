@@ -23,10 +23,6 @@ val dataModule = module {
         provideProductDao(get())
     }
 
-    single {
-        AuthRepository(get(), get(), get())
-    }
-
     single{
         ProductRepository(get(), get())
     }
