@@ -7,14 +7,17 @@ import app.adi_random.dealscraper.data.dto.product.ReportMissLinkDto
 import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.data.models.ReportMissLinkModel
 import app.adi_random.dealscraper.data.models.UserProductInstalment
+import app.adi_random.dealscraper.data.models.bottomSheet.ReportBottomSheetModel
 import app.adi_random.dealscraper.data.repository.ProductRepository
+import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
     private val productRepository: ProductRepository,
-    private val productId: Int
+    private val productId: Int,
+    private val navigationViewModel: NavigationViewModel
 ) : ViewModel() {
     private val _product = MutableStateFlow<ProductModel?>(null)
     val product = _product.asStateFlow()
@@ -77,14 +80,24 @@ class ProductDetailsViewModel(
 
     private fun getReportableOrcProductNames() {
         viewModelScope.launch(Dispatchers.IO) {
-            reportedProductLinks.value= productRepository.getReportedProducts()
+            reportedProductLinks.value = productRepository.getReportedProducts()
         }
     }
 
-    fun onReport(ocrProductName: String) {
+    private fun onReport(ocrProductName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             productRepository.reportMissLink(productId, ocrProductName)
-            reportedProductLinks.value = reportedProductLinks.value + ReportMissLinkModel(productId, ocrProductName)
+            reportedProductLinks.value =
+                reportedProductLinks.value + ReportMissLinkModel(productId, ocrProductName)
         }
+    }
+
+    fun openBottomSheet() {
+        navigationViewModel.showBottomSheet(
+            ReportBottomSheetModel(
+                reportableOrcProductNames.value,
+                ::onReport
+            )
+        )
     }
 }

@@ -14,10 +14,13 @@ import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.ProductModel
 import app.adi_random.dealscraper.data.models.StoreMetadataModel
+import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
+import app.adi_random.dealscraper.data.models.bottomSheet.InfoMessageBottomSheetModel
 import app.adi_random.dealscraper.data.repository.*
 import app.adi_random.dealscraper.services.images.ImageDetectionService
 import app.adi_random.dealscraper.services.images.ImageUploadService
 import app.adi_random.dealscraper.ui.misc.InfoStatus
+import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import app.adi_random.dealscraper.usecase.ImageUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,7 +34,8 @@ class ProductListViewModel(
     private val productRepository: ProductRepository,
     private val uploadService: ImageUploadService,
     private val storeRepository: StoreRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val navigationViewModel: NavigationViewModel
 ) : ViewModel() {
 
     private val _products = MutableStateFlow<List<ProductModel>>(emptyList())
@@ -47,7 +51,7 @@ class ProductListViewModel(
     val hideKeyboard = _hideKeyboard.asSharedFlow()
 
 
-    val addProductUnitList = listOf(R.string.manually_add_unit_buc, R.string.manually_add_unit_kg)
+    private val addProductUnitList = listOf(R.string.manually_add_unit_buc, R.string.manually_add_unit_kg)
 
     val actualSpending = products.map { products ->
         products.map { product ->
@@ -71,15 +75,13 @@ class ProductListViewModel(
     private val _shouldCloseAddProductDialog = MutableSharedFlow<Unit>()
     val shouldCloseAddProductDialog = _shouldCloseAddProductDialog.asSharedFlow()
 
-    private val _storeMetadata = MutableStateFlow<List<StoreMetadataModel>>(emptyList())
-    val storeMetadata = _storeMetadata.asStateFlow()
+    private val storeMetadata = MutableStateFlow<List<StoreMetadataModel>>(emptyList())
 
     private val _isBottomDrawerOpen = MutableSharedFlow<Boolean>()
     val isBottomDrawerOpen = _isBottomDrawerOpen.asSharedFlow()
 
 
-    private val _infoMessage = MutableStateFlow<Pair<String, InfoStatus>>("" to InfoStatus.SUCCESS)
-    val infoMessage = _infoMessage.asStateFlow()
+    private val infoMessage = MutableStateFlow<Pair<String, InfoStatus>>("" to InfoStatus.SUCCESS)
 
     private var didRequestGalleryPermission = false
 
@@ -96,7 +98,7 @@ class ProductListViewModel(
     private suspend fun getStores() {
         storeRepository.getStore().collect() { result ->
             when (result) {
-                is ResultWrapper.Success -> _storeMetadata.value = result.data
+                is ResultWrapper.Success -> storeMetadata.value = result.data
                 is ResultWrapper.Error -> TODO()
                 is ResultWrapper.Loading -> _isLoading.value = result.isLoading
             }
@@ -204,13 +206,32 @@ class ProductListViewModel(
 
     private fun showInfoMessage(message: Pair<String, InfoStatus>) {
         viewModelScope.launch {
-            _infoMessage.emit(message)
+            infoMessage.emit(message)
             _isBottomDrawerOpen.emit(true)
             delay(3000)
             _isBottomDrawerOpen.emit(false)
             delay(500)
-            _infoMessage.emit("" to InfoStatus.SUCCESS)
+            infoMessage.emit("" to InfoStatus.SUCCESS)
         }
     }
 
+    fun openBottomDrawer() {
+        viewModelScope.launch {
+            navigationViewModel.showBottomSheet(
+                if (infoMessage.value.first != "") {
+                    InfoMessageBottomSheetModel(
+                        message = infoMessage.value.first,
+                        status = infoMessage.value.second
+                    )
+                } else {
+                    AddProductBottomSheetModel(
+                        unitStringResList = addProductUnitList,
+                        stores = storeMetadata.value,
+                        ::addProduct,
+                        ::pickImage
+                    )
+                }
+            )
+        }
+    }
 }

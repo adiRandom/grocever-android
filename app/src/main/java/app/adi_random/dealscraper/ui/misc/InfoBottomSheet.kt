@@ -15,13 +15,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.R
+import app.adi_random.dealscraper.data.models.bottomSheet.InfoMessageBottomSheetModel
 
 enum class InfoStatus {
     SUCCESS, ERROR
 }
 
 @Composable
-fun InfoBottomSheet(msg: String, status: InfoStatus) {
+fun InfoBottomSheet(model: InfoMessageBottomSheetModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -31,7 +32,7 @@ fun InfoBottomSheet(msg: String, status: InfoStatus) {
         Image(
             painter =
             painterResource(
-                id = when (status) {
+                id = when (model.status) {
                     InfoStatus.SUCCESS -> {
                         R.drawable.ic_check
                     }
@@ -41,6 +42,6 @@ fun InfoBottomSheet(msg: String, status: InfoStatus) {
                 }
             ), contentDescription = "status_icon",
             modifier = Modifier.size(48.dp))
-        Text(text = msg, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+        Text(text = model.message, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
     }
 }

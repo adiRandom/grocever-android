@@ -9,17 +9,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.adi_random.dealscraper.data.models.bottomSheet.ReportBottomSheetModel
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ReportModalContent(ocrProductNames: List<String>, onReport: (String) -> Unit) {
+fun ReportModalContent(model: ReportBottomSheetModel) {
 
-    if (ocrProductNames.isEmpty()) {
+    if (model.ocrProductNames.isEmpty()) {
         return
     }
 
-    var selectedOcrProduct by remember { mutableStateOf(ocrProductNames.first()) }
+    var selectedOcrProduct by remember { mutableStateOf(model.ocrProductNames.first()) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,7 +61,7 @@ fun ReportModalContent(ocrProductNames: List<String>, onReport: (String) -> Unit
                 ExposedDropdownMenu(
                     expanded = isExpanded,
                     onDismissRequest = { isExpanded = false }) {
-                    ocrProductNames.forEach { ocrProductName ->
+                    model.ocrProductNames.forEach { ocrProductName ->
 
                         DropdownMenuItem(onClick = {
                             selectedOcrProduct = ocrProductName
@@ -75,7 +76,7 @@ fun ReportModalContent(ocrProductNames: List<String>, onReport: (String) -> Unit
 
         Button(
             onClick = {
-                onReport(selectedOcrProduct)
+                model.onReport(selectedOcrProduct)
             },
             modifier = Modifier
                 .padding(vertical = 12.dp)

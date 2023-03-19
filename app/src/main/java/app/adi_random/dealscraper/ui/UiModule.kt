@@ -8,17 +8,18 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val uiModule = module {
-    viewModel {
+    viewModel { (navViewModel: NavigationViewModel) ->
         ProductListViewModel(
-            get(), get(), storeRepository = get(), authRepository = get()
+            get(), get(), storeRepository = get(), authRepository = get(), navViewModel
         )
     }
     viewModel { AuthScreenViewModel(get(), get()) }
     viewModel { NavigationViewModel(get()) }
-    viewModel { (productId: Int) ->
+    viewModel { (productId: Int, navigationViewModel: NavigationViewModel) ->
         ProductDetailsViewModel(
             productRepository = get(),
             productId = productId,
+            navigationViewModel = navigationViewModel
         )
     }
 }

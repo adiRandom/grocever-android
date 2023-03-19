@@ -16,15 +16,14 @@ import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.StoreMetadataModel
+import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddProductBottomDrawerContent(
-    unitStringResList: List<Int> = emptyList(),
-    stores: List<StoreMetadataModel> = emptyList(),
-    onSubmit: (model: ManualAddProductModel) -> Unit,
-    pickImage: () -> Unit
+    model: AddProductBottomSheetModel,
 ) {
+    val (unitStringResList, stores, onSubmit, pickImage) = model
     var productName by remember { mutableStateOf("") }
     var productQty by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }

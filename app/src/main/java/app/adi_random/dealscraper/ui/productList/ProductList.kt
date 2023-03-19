@@ -2,19 +2,15 @@ package app.adi_random.dealscraper.ui.productList
 
 import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -26,17 +22,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import app.adi_random.dealscraper.R
-import app.adi_random.dealscraper.ui.AddProductBottomDrawerContent
-import app.adi_random.dealscraper.ui.misc.InfoBottomSheet
-import app.adi_random.dealscraper.ui.misc.InfoStatus
+import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
+import app.adi_random.dealscraper.data.models.bottomSheet.InfoMessageBottomSheetModel
 import app.adi_random.dealscraper.ui.misc.LoadingScreen
+import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import app.adi_random.dealscraper.ui.navigation.Routes
 import app.adi_random.dealscraper.usecase.CollectAsEffect
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(
@@ -45,15 +42,14 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun ProductList(
-    viewModel: ProductListViewModel = koinViewModel(),
+    viewModel: ProductListViewModel,
+    navViewModel: NavigationViewModel,
     navController: NavHostController
 ) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
-    val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val infoMessage by viewModel.infoMessage.collectAsStateWithLifecycle()
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -81,13 +77,10 @@ fun ProductList(
     }
 
     viewModel.isBottomDrawerOpen.CollectAsEffect {
-        scope.launch {
-            if (it) {
-                drawerState.open()
-
-            } else {
-                drawerState.close()
-            }
+        if (it) {
+            viewModel.openBottomDrawer()
+        } else {
+            navViewModel.hideBottomSheet()
         }
     }
 
@@ -98,7 +91,7 @@ fun ProductList(
 
     viewModel.shouldCloseAddProductDialog.CollectAsEffect {
         scope.launch {
-            drawerState.close()
+            navViewModel.hideBottomSheet()
         }
     }
 
@@ -106,74 +99,58 @@ fun ProductList(
         viewModel.requestGalleryPermission(context, requestPermissionLauncher)
     }
 
-
     LoadingScreen(isLoading = isLoading) {
 
         val keyboardController = LocalSoftwareKeyboardController.current
-        LaunchedEffect(drawerState.isOpen) {
-            viewModel.onDrawerOpenStateChange(drawerState.isOpen)
+        LaunchedEffect(navViewModel.drawerState.value.isOpen) {
+            viewModel.onDrawerOpenStateChange(navViewModel.drawerState.value.isOpen)
         }
         viewModel.hideKeyboard.CollectAsEffect {
             keyboardController?.hide()
         }
 
-        val stores by viewModel.storeMetadata.collectAsStateWithLifecycle()
 
-        BottomDrawer(drawerState = drawerState, drawerContent = {
-            if (infoMessage.first != "") {
-                InfoBottomSheet(msg = infoMessage.first, status = infoMessage.second)
-            } else {
-                AddProductBottomDrawerContent(
-                    unitStringResList = viewModel.addProductUnitList,
-                    stores = stores,
-                    onSubmit = viewModel::addProduct, pickImage = viewModel::pickImage
-                )
-            }
-        }) {
-            Scaffold(
-                scaffoldState = scaffoldState,
-                floatingActionButton = {
-                    FloatingActionButton(onClick = {
-                        scope.launch {
-                            drawerState.open()
-                        }
-                    }) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_add_24),
-                            contentDescription = "Menu"
+        Scaffold(
+            scaffoldState = scaffoldState,
+            floatingActionButton = {
+                FloatingActionButton(onClick = {
+                    viewModel.openBottomDrawer()
+                }) {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_add_24),
+                        contentDescription = "Menu"
+                    )
+                }
+            },
+
+            ) {
+            Column() {
+                val actualSpending by viewModel.actualSpending.collectAsStateWithLifecycle()
+                val savings by viewModel.savings.collectAsStateWithLifecycle()
+                val products by viewModel.products.collectAsStateWithLifecycle()
+                ProductListHeader(actualSpending = actualSpending, savings = savings) {
+                    viewModel.logout()
+                }
+
+                if (products.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            text = "No products added yet",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
-                },
-
-                ) {
-                Column() {
-                    val actualSpending by viewModel.actualSpending.collectAsStateWithLifecycle()
-                    val savings by viewModel.savings.collectAsStateWithLifecycle()
-                    val products by viewModel.products.collectAsStateWithLifecycle()
-                    ProductListHeader(actualSpending = actualSpending, savings = savings) {
-                        viewModel.logout()
-                    }
-
-                    if (products.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Text(
-                                text = "No products added yet",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    } else {
-                        LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
-                            items(items = products, key = { it.name }) { product ->
-                                ProductEntry(product = product) {
-                                    viewModel.navigateToProductDetails(it)
-                                }
+                } else {
+                    LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
+                        items(items = products, key = { it.name }) { product ->
+                            ProductEntry(product = product) {
+                                viewModel.navigateToProductDetails(it)
                             }
                         }
                     }
+                    }
                 }
             }
-        }
     }
 }

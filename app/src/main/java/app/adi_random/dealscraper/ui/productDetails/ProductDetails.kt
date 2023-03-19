@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
+import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import app.adi_random.dealscraper.ui.report.ReportModalContent
 import app.adi_random.dealscraper.ui.theme.Colors
 import kotlinx.coroutines.launch
@@ -31,7 +32,6 @@ import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalLifecycleComposeApi::class,
-    ExperimentalMaterialApi::class,
 )
 
 @Composable
@@ -41,22 +41,8 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
     val reportableOcrProducts by viewModel.reportableOrcProductNames.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
-    val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
 
-    BottomDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ReportModalContent(
-                ocrProductNames = reportableOcrProducts,
-                onReport = { ocrProductName ->
-                    scope.launch {
-                        drawerState.close()
-                    }
-                    viewModel.onReport(ocrProductName)
-                })
-        },
-    ) {
-        Column(Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)) {
+    Column(Modifier.padding(0.dp, 8.dp, 0.dp, 0.dp)) {
             Text(
                 text = stringResource(id = R.string.you_bought),
                 fontSize = 24.sp,
@@ -130,7 +116,7 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
 
                 if (reportableOcrProducts.isNotEmpty()) {
                     IconButton(
-                        onClick = { scope.launch { drawerState.open() } },
+                        onClick = { scope.launch { viewModel.openBottomSheet() } },
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Image(
@@ -143,6 +129,5 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                     }
                 }
             }
-        }
     }
 }
