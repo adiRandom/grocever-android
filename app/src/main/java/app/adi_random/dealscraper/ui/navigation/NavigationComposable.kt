@@ -3,6 +3,7 @@ package app.adi_random.dealscraper.ui.navigation
 import androidx.compose.material.BottomDrawer
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +30,13 @@ fun Navigation(viewModel: NavigationViewModel = koinViewModel()) {
     val navController = rememberNavController()
     val startDestination by viewModel.startRoute.collectAsStateWithLifecycle()
     val bottomSheetModel by viewModel.bottomSheetModel.collectAsStateWithLifecycle()
+    val isBottomDrawerOpen by viewModel.isBottomSheetVisible.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = viewModel.drawerState.value.isOpen){
+        if(!isBottomDrawerOpen && viewModel.drawerState.value.isOpen){
+            viewModel.drawerState.value.close()
+        }
+    }
 
     AdaptiveBottomDrawer(drawerState = viewModel.drawerState.value, model = bottomSheetModel) {
         NavHost(navController = navController, startDestination = startDestination) {

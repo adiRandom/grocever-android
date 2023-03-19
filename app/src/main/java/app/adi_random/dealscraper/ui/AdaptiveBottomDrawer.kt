@@ -1,9 +1,12 @@
 package app.adi_random.dealscraper.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.BottomDrawer
 import androidx.compose.material.BottomDrawerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
 import app.adi_random.dealscraper.data.models.bottomSheet.BaseBottomSheetModel
 import app.adi_random.dealscraper.data.models.bottomSheet.InfoMessageBottomSheetModel
@@ -28,6 +31,9 @@ fun AdaptiveBottomDrawer(
             }
             is ReportBottomSheetModel -> {
                 ReportModalContent(model)
+            }
+            else ->{
+                Box(modifier = Modifier.fillMaxSize())
             }
         }
     }) {

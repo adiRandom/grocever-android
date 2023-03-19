@@ -81,7 +81,7 @@ class ProductListViewModel(
     val isBottomDrawerOpen = _isBottomDrawerOpen.asSharedFlow()
 
 
-    private val infoMessage = MutableStateFlow<Pair<String, InfoStatus>>("" to InfoStatus.SUCCESS)
+    private val infoMessage = MutableStateFlow("" to InfoStatus.SUCCESS)
 
     private var didRequestGalleryPermission = false
 
@@ -128,7 +128,7 @@ class ProductListViewModel(
         }
     }
 
-    fun addProduct(model: ManualAddProductModel) {
+    private fun addProduct(model: ManualAddProductModel) {
         viewModelScope.launch(Dispatchers.IO) {
             productRepository.createProduct(model).collect() { result ->
                 when (result) {
@@ -143,7 +143,7 @@ class ProductListViewModel(
         }
     }
 
-    fun pickImage() {
+    private fun pickImage() {
         viewModelScope.launch {
             _shouldPickImageFromGallery.emit(Unit)
         }

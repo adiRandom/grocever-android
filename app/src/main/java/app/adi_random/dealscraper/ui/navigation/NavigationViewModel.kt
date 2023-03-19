@@ -21,6 +21,9 @@ class NavigationViewModel(authRepository: AuthRepository) : ViewModel() {
         if (it) Routes.PRODUCT_LIST else Routes.AUTH
     }.stateIn(viewModelScope, SharingStarted.Eagerly, Routes.AUTH)
 
+    private val _isBottomSheetVisible = MutableStateFlow(false)
+    val isBottomSheetVisible = _isBottomSheetVisible.asStateFlow()
+
     private val _drawerState = mutableStateOf(BottomDrawerState(BottomDrawerValue.Closed))
     val drawerState: State<BottomDrawerState> = _drawerState
 
@@ -31,6 +34,7 @@ class NavigationViewModel(authRepository: AuthRepository) : ViewModel() {
         viewModelScope.launch {
             _bottomSheetModel.value = model
             _drawerState.value.open()
+            _isBottomSheetVisible.value = true
         }
     }
 
@@ -38,6 +42,7 @@ class NavigationViewModel(authRepository: AuthRepository) : ViewModel() {
         viewModelScope.launch {
             _drawerState.value.close()
             _bottomSheetModel.value = null
+            _isBottomSheetVisible.value = false
         }
     }
 }

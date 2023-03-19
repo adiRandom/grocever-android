@@ -17,7 +17,7 @@ import app.adi_random.dealscraper.data.models.bottomSheet.ReportBottomSheetModel
 fun ReportModalContent(model: ReportBottomSheetModel) {
 
     if (model.ocrProductNames.isEmpty()) {
-        return
+        return Box(modifier = Modifier.fillMaxSize())
     }
 
     var selectedOcrProduct by remember { mutableStateOf(model.ocrProductNames.first()) }
