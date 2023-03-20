@@ -58,7 +58,13 @@ fun AddProductBottomDrawerContent(
 
 
     Text(
-        text = stringResource(id = R.string.manually_add),
+        text = stringResource(
+            id = if (canEditName) {
+                R.string.manually_add
+            } else {
+                R.string.manually_edit
+            }
+        ),
         fontSize = 24.sp,
         fontWeight = FontWeight.SemiBold,
         modifier = Modifier
@@ -225,6 +231,14 @@ fun AddProductBottomDrawerContent(
     ) {
         Button(
             enabled = isFormValid,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = if (isFormValid) {
+                    app.adi_random.dealscraper.ui.theme.Colors.Primary
+                } else {
+                    app.adi_random.dealscraper.ui.theme.Colors.Primary.copy(alpha = 0.5f)
+                },
+                contentColor = app.adi_random.dealscraper.ui.theme.Colors.TextOnPrimary
+            ),
             onClick = {
                 onSubmit(
                     if (initialOcrProduct != null) {
@@ -250,7 +264,15 @@ fun AddProductBottomDrawerContent(
             modifier = Modifier
                 .padding(12.dp, 0.dp, 12.dp, 24.dp)
         ) {
-            Text(text = stringResource(id = R.string.manually_add_btn))
+            Text(
+                text = stringResource(
+                    id = if (canEditName) {
+                        R.string.manually_add_btn
+                    } else {
+                        R.string.manually_edit_btn
+                    }
+                )
+            )
         }
 
         if (canEditName) {

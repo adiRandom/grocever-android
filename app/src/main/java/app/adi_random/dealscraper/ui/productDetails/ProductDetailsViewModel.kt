@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.data.models.*
 import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
+import app.adi_random.dealscraper.data.models.bottomSheet.InfoMessageBottomSheetModel
 import app.adi_random.dealscraper.data.models.bottomSheet.ReportBottomSheetModel
 import app.adi_random.dealscraper.data.repository.ProductRepository
 import app.adi_random.dealscraper.data.repository.ResultWrapper
 import app.adi_random.dealscraper.data.repository.StoreRepository
 import app.adi_random.dealscraper.ui.Constants
+import app.adi_random.dealscraper.ui.misc.InfoStatus
 import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -44,7 +46,7 @@ class ProductDetailsViewModel(
         getReportableOrcProductNames()
     }
 
-    val  productInstalmentsByOcrName =
+    val productInstalmentsByOcrName =
         product.map { productModel ->
             productModel?.purchaseInstalments?.groupBy {
                 it.ocrName
@@ -110,7 +112,28 @@ class ProductDetailsViewModel(
 
     private fun onEdit(model: ManualAddProductModel) {
         (model as? EditPurchaseInstalmentModel)?.let { model ->
-            TODO(" Make edit api call")
+            viewModelScope.launch {
+                try {
+                    navigationViewModel.hideBottomSheet()
+                    val newPurchaseInstalmentModel = productRepository.editProduct(model)
+                    _product.value = _product.value?.copy(
+                        purchaseInstalments = _product.value?.purchaseInstalments?.map {
+                            if (it.id == model.id) {
+                                newPurchaseInstalmentModel
+                            } else {
+                                it
+                            }
+                        } ?: emptyList()
+                    )
+                } catch (e: Exception) {
+                    navigationViewModel.showBottomSheet(
+                        InfoMessageBottomSheetModel(
+                            e.message ?: "Unknown Error",
+                            InfoStatus.ERROR
+                        )
+                    )
+                }
+            }
         }
     }
 

@@ -3,10 +3,7 @@ package app.adi_random.dealscraper.data.repository
 import app.adi_random.dealscraper.data.dao.ProductDao
 import app.adi_random.dealscraper.data.dto.product.ReportMissLinkDto
 import app.adi_random.dealscraper.data.entity.ProductWithPurchaseInstalmentsRelation
-import app.adi_random.dealscraper.data.models.ManualAddProductModel
-import app.adi_random.dealscraper.data.models.ProductModel
-import app.adi_random.dealscraper.data.models.ReportMissLinkModel
-import app.adi_random.dealscraper.data.models.UserProductInstalment
+import app.adi_random.dealscraper.data.models.*
 import app.adi_random.dealscraper.services.api.ProductApi
 import kotlinx.coroutines.flow.flow
 
@@ -69,6 +66,16 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
     suspend fun getReportedProducts(): List<ReportMissLinkModel> {
         val apiResponse = api.getReportedProducts()
         return apiResponse.body.map { it.toModel() }
+    }
+
+    suspend fun editProduct(product: EditPurchaseInstalmentModel): UserProductInstalment {
+        val dto = product.toDto()
+        val result = api.updateProduct(product.id, dto)
+        if(result.isSuccessful){
+           return result.body.toModel()
+        }
+
+        throw Exception("Failed to update product")
     }
 
 }

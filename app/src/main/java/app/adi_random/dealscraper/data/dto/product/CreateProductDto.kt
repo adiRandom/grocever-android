@@ -1,6 +1,6 @@
 package app.adi_random.dealscraper.data.dto.product
 
-data class CreateProductDot(
+data class CreateProductDto(
     val ocrName: String,
     val qty: Float,
     val unitPrice: Float,

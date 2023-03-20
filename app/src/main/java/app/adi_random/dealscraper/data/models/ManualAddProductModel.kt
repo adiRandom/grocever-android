@@ -1,6 +1,6 @@
 package app.adi_random.dealscraper.data.models
 
-import app.adi_random.dealscraper.data.dto.product.CreateProductDot
+import app.adi_random.dealscraper.data.dto.product.CreateProductDto
 
 open class ManualAddProductModel(
     val name: String,
@@ -9,7 +9,7 @@ open class ManualAddProductModel(
     val unitName: String,
     val storeId: Int
 ){
-    fun toDto() = CreateProductDot(
+    open fun toDto() = CreateProductDto(
         ocrName = name,
         qty = quantity,
         unitPrice = unitPrice,

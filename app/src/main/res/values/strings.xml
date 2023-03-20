@@ -13,6 +13,7 @@
     <string name="you_bought">You bought</string>
     <string name="product_savings">This would have saved you</string>
     <string name="manually_add">Add a product</string>
+    <string name="manually_edit">Edit a product</string>
     <string name="manually_add_name_label">Product name</string>
     <string name="manually_add_name_hint">Skimmed Milk</string>
     <string name="manually_add_price_label">Unit Price</string>
@@ -21,6 +22,7 @@
     <string name="manually_add_quantity_hint">1</string>
     <string name="manually_add_unit_label">Unit</string>
     <string name="manually_add_btn">Add</string>
+    <string name="manually_edit_btn">Save</string>
     <string name="manually_add_img_btn">Add Image</string>
     <string name="manually_add_unit_kg">Kg</string>
     <string name="manually_add_unit_buc">Unit</string>
