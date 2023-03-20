@@ -19,6 +19,7 @@ import app.adi_random.dealscraper.data.models.bottomSheet.InfoMessageBottomSheet
 import app.adi_random.dealscraper.data.repository.*
 import app.adi_random.dealscraper.services.images.ImageDetectionService
 import app.adi_random.dealscraper.services.images.ImageUploadService
+import app.adi_random.dealscraper.ui.Constants
 import app.adi_random.dealscraper.ui.misc.InfoStatus
 import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import app.adi_random.dealscraper.usecase.ImageUseCase
@@ -51,7 +52,6 @@ class ProductListViewModel(
     val hideKeyboard = _hideKeyboard.asSharedFlow()
 
 
-    private val addProductUnitList = listOf(R.string.manually_add_unit_buc, R.string.manually_add_unit_kg)
 
     val actualSpending = products.map { products ->
         products.map { product ->
@@ -225,10 +225,10 @@ class ProductListViewModel(
                     )
                 } else {
                     AddProductBottomSheetModel(
-                        unitStringResList = addProductUnitList,
+                        unitStringResList = Constants.addProductUnitList,
                         stores = storeMetadata.value,
-                        ::addProduct,
-                        ::pickImage
+                        onSubmit = ::addProduct,
+                        pickImage = ::pickImage
                     )
                 }
             )

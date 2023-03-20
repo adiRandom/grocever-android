@@ -1,6 +1,5 @@
 package app.adi_random.dealscraper.ui.productDetails
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,14 +17,10 @@ import app.adi_random.dealscraper.R
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
-import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
-import app.adi_random.dealscraper.ui.report.ReportModalContent
 import app.adi_random.dealscraper.ui.theme.Colors
 import kotlinx.coroutines.launch
 
@@ -73,7 +68,8 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
                                 instalment = instalment,
                                 measureUnit = instalment.unitName,
                                 topRoundCorner = index == 0,
-                                bottomRoundCorner = index == instalments.size - 1
+                                bottomRoundCorner = index == instalments.size - 1,
+                                onEdit = viewModel::onEditPurchaseInstalment
                             )
                         }
                     }
@@ -116,7 +112,7 @@ fun ProductDetails(viewModel: ProductDetailsViewModel) {
 
                 if (reportableOcrProducts.isNotEmpty()) {
                     IconButton(
-                        onClick = { scope.launch { viewModel.openBottomSheet() } },
+                        onClick = { scope.launch { viewModel.openReportBottomSheet() } },
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Image(

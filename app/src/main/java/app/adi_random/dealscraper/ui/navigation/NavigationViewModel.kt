@@ -33,14 +33,12 @@ class NavigationViewModel(authRepository: AuthRepository) : ViewModel() {
     fun showBottomSheet(model: BaseBottomSheetModel) {
         viewModelScope.launch {
             _bottomSheetModel.value = model
-            _drawerState.value.open()
             _isBottomSheetVisible.value = true
         }
     }
 
     fun hideBottomSheet() {
         viewModelScope.launch {
-            _drawerState.value.close()
             _bottomSheetModel.value = null
             _isBottomSheetVisible.value = false
         }

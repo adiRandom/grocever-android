@@ -2,7 +2,7 @@ package app.adi_random.dealscraper.data.models
 
 import app.adi_random.dealscraper.data.dto.product.CreateProductDot
 
-data class ManualAddProductModel(
+open class ManualAddProductModel(
     val name: String,
     val unitPrice: Float,
     val quantity: Float,

@@ -1,14 +1,14 @@
 package app.adi_random.dealscraper.ui.productDetails
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.adi_random.dealscraper.data.dto.product.ReportMissLinkDto
-import app.adi_random.dealscraper.data.models.ProductModel
-import app.adi_random.dealscraper.data.models.ReportMissLinkModel
-import app.adi_random.dealscraper.data.models.UserProductInstalment
+import app.adi_random.dealscraper.data.models.*
+import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
 import app.adi_random.dealscraper.data.models.bottomSheet.ReportBottomSheetModel
 import app.adi_random.dealscraper.data.repository.ProductRepository
+import app.adi_random.dealscraper.data.repository.ResultWrapper
+import app.adi_random.dealscraper.data.repository.StoreRepository
+import app.adi_random.dealscraper.ui.Constants
 import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -17,10 +17,17 @@ import kotlinx.coroutines.launch
 class ProductDetailsViewModel(
     private val productRepository: ProductRepository,
     private val productId: Int,
-    private val navigationViewModel: NavigationViewModel
+    private val navigationViewModel: NavigationViewModel,
+    private val storeRepository: StoreRepository
 ) : ViewModel() {
     private val _product = MutableStateFlow<ProductModel?>(null)
     val product = _product.asStateFlow()
+
+    init{
+        getStores()
+    }
+
+    private val storeMetadata = MutableStateFlow<List<StoreMetadataModel>>(emptyList())
 
     private val reportedProductLinks = MutableStateFlow<List<ReportMissLinkModel>>(emptyList())
 
@@ -92,12 +99,43 @@ class ProductDetailsViewModel(
         }
     }
 
-    fun openBottomSheet() {
+    fun openReportBottomSheet() {
         navigationViewModel.showBottomSheet(
             ReportBottomSheetModel(
                 reportableOrcProductNames.value,
                 ::onReport
             )
         )
+    }
+
+    private fun onEdit(model: ManualAddProductModel) {
+        (model as? EditPurchaseInstalmentModel)?.let { model ->
+            TODO(" Make edit api call")
+        }
+    }
+
+    fun onEditPurchaseInstalment(purchaseInstalment: UserProductInstalment) {
+        navigationViewModel.showBottomSheet(
+            AddProductBottomSheetModel(
+                Constants.addProductUnitList,
+                storeMetadata.value,
+                EditPurchaseInstalmentModel(purchaseInstalment),
+                ::onEdit,
+                {}
+            )
+        )
+    }
+
+    private fun getStores() {
+        viewModelScope.launch {
+            storeRepository.getStore().collect() { result ->
+                when (result) {
+                    is ResultWrapper.Success -> storeMetadata.value = result.data
+                    is ResultWrapper.Error -> TODO()
+                    is ResultWrapper.Loading -> {
+                    }
+                }
+            }
+        }
     }
 }

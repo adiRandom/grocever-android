@@ -1,21 +1,20 @@
 package app.adi_random.dealscraper.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.R
+import app.adi_random.dealscraper.data.models.EditPurchaseInstalmentModel
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
-import app.adi_random.dealscraper.data.models.StoreMetadataModel
 import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -23,12 +22,19 @@ import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetM
 fun AddProductBottomDrawerContent(
     model: AddProductBottomSheetModel,
 ) {
-    val (unitStringResList, stores, onSubmit, pickImage) = model
-    var productName by remember { mutableStateOf("") }
-    var productQty by remember { mutableStateOf("") }
-    var productPrice by remember { mutableStateOf("") }
+    val (
+        unitStringResList,
+        stores,
+        initialOcrProduct,
+        onSubmit,
+        pickImage
+    ) = model
+    val canEditName by remember { mutableStateOf(initialOcrProduct == null) }
+    var productName by remember { mutableStateOf(initialOcrProduct?.name ?: "") }
+    var productQty by remember { mutableStateOf(initialOcrProduct?.quantity?.toString() ?: "") }
+    var productPrice by remember { mutableStateOf(initialOcrProduct?.unitPrice?.toString() ?: "") }
 
-    var productUnit by remember { mutableStateOf(null as String?) }
+    var productUnit by remember { mutableStateOf(initialOcrProduct?.unitName) }
     val defaultUniLabel = stringResource(R.string.manually_add_unit_buc)
     val selectedUnitLabel by remember {
         derivedStateOf {
@@ -36,7 +42,7 @@ fun AddProductBottomDrawerContent(
         }
     }
 
-    var selectedStoreId by remember { mutableStateOf(null as Int?) }
+    var selectedStoreId by remember { mutableStateOf(initialOcrProduct?.storeId) }
     val defaultStoreLabel = stringResource(R.string.manually_add_store_label)
     val selectedStoreName by remember {
         derivedStateOf {
@@ -70,10 +76,19 @@ fun AddProductBottomDrawerContent(
                 )
             )
         },
+        textStyle = TextStyle.Default.copy(
+            color = if (canEditName) {
+                app.adi_random.dealscraper.ui.theme.Colors.TextPrimary
+            } else {
+                app.adi_random.dealscraper.ui.theme.Colors.TextSecondary
+            }
+        ),
+        readOnly = canEditName.not(),
         singleLine = true,
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp, 0.dp, 12.dp, 12.dp)
+
     )
     Row(
         modifier = Modifier
@@ -212,13 +227,24 @@ fun AddProductBottomDrawerContent(
             enabled = isFormValid,
             onClick = {
                 onSubmit(
-                    ManualAddProductModel(
-                        productName,
-                        productPrice.toFloat(),
-                        productQty.toFloat(),
-                        productUnit ?: "",
-                        selectedStoreId ?: 0
-                    )
+                    if (initialOcrProduct != null) {
+                        EditPurchaseInstalmentModel(
+                            productName,
+                            productPrice.toFloat(),
+                            productQty.toFloat(),
+                            productUnit ?: "",
+                            selectedStoreId ?: 0,
+                            initialOcrProduct.id,
+                        )
+                    } else {
+                        ManualAddProductModel(
+                            productName,
+                            productPrice.toFloat(),
+                            productQty.toFloat(),
+                            productUnit ?: "",
+                            selectedStoreId ?: 0
+                        )
+                    }
                 )
             },
             modifier = Modifier
@@ -227,8 +253,10 @@ fun AddProductBottomDrawerContent(
             Text(text = stringResource(id = R.string.manually_add_btn))
         }
 
-        TextButton(onClick = pickImage) {
-            Text(text = stringResource(id = R.string.manually_add_img_btn))
+        if (canEditName) {
+            TextButton(onClick = pickImage) {
+                Text(text = stringResource(id = R.string.manually_add_img_btn))
+            }
         }
     }
 }

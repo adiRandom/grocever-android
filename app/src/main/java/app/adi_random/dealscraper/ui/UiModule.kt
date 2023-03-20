@@ -1,5 +1,6 @@
 package app.adi_random.dealscraper.ui
 
+import app.adi_random.dealscraper.data.models.StoreMetadataModel
 import app.adi_random.dealscraper.ui.auth.AuthScreenViewModel
 import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import app.adi_random.dealscraper.ui.productDetails.ProductDetailsViewModel
@@ -15,11 +16,14 @@ val uiModule = module {
     }
     viewModel { AuthScreenViewModel(get(), get()) }
     viewModel { NavigationViewModel(get()) }
-    viewModel { (productId: Int, navigationViewModel: NavigationViewModel) ->
+    viewModel { (productId: Int,
+                    navigationViewModel: NavigationViewModel,
+                ) ->
         ProductDetailsViewModel(
             productRepository = get(),
             productId = productId,
-            navigationViewModel = navigationViewModel
+            navigationViewModel = navigationViewModel,
+            storeRepository = get(),
         )
     }
 }
