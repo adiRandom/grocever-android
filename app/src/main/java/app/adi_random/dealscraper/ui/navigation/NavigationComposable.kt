@@ -32,17 +32,17 @@ fun Navigation(viewModel: NavigationViewModel = koinViewModel()) {
     val bottomSheetModel by viewModel.bottomSheetModel.collectAsStateWithLifecycle()
     val isBottomDrawerOpen by viewModel.isBottomSheetVisible.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = viewModel.drawerState.value.isOpen) {
-        if (!isBottomDrawerOpen && viewModel.drawerState.value.isOpen) {
-            viewModel.drawerState.value.close()
+    LaunchedEffect(key1 = viewModel.drawerState.value.isVisible) {
+        if (isBottomDrawerOpen != viewModel.drawerState.value.isVisible) {
+            viewModel.hideBottomSheet()
         }
     }
 
     LaunchedEffect(key1 = isBottomDrawerOpen) {
         if (isBottomDrawerOpen) {
-            viewModel.drawerState.value.open()
+            viewModel.drawerState.value.show()
         } else {
-            viewModel.drawerState.value.close()
+            viewModel.hideBottomSheet()
         }
     }
 

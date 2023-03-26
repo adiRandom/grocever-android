@@ -102,8 +102,8 @@ fun ProductList(
     LoadingScreen(isLoading = isLoading) {
 
         val keyboardController = LocalSoftwareKeyboardController.current
-        LaunchedEffect(navViewModel.drawerState.value.isOpen) {
-            viewModel.onDrawerOpenStateChange(navViewModel.drawerState.value.isOpen)
+        LaunchedEffect(navViewModel.drawerState.value.isVisible) {
+            viewModel.onDrawerOpenStateChange(navViewModel.drawerState.value.isVisible)
         }
         viewModel.hideKeyboard.CollectAsEffect {
             keyboardController?.hide()

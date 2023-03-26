@@ -1,8 +1,6 @@
 package app.adi_random.dealscraper.ui.navigation
 
-import androidx.compose.material.BottomDrawerState
-import androidx.compose.material.BottomDrawerValue
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -24,8 +22,8 @@ class NavigationViewModel(authRepository: AuthRepository) : ViewModel() {
     private val _isBottomSheetVisible = MutableStateFlow(false)
     val isBottomSheetVisible = _isBottomSheetVisible.asStateFlow()
 
-    private val _drawerState = mutableStateOf(BottomDrawerState(BottomDrawerValue.Closed))
-    val drawerState: State<BottomDrawerState> = _drawerState
+    private val _drawerState = mutableStateOf(ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+    val drawerState: State<ModalBottomSheetState> = _drawerState
 
     private val _bottomSheetModel = MutableStateFlow<BaseBottomSheetModel?>(null)
     val bottomSheetModel: StateFlow<BaseBottomSheetModel?> = _bottomSheetModel
