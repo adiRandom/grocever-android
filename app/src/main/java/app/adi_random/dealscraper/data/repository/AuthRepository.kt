@@ -40,6 +40,7 @@ class AuthRepository(
         when (val result = response.toResultWrapper()) {
             is ResultWrapper.Success -> {
                 onSuccessLogin(result.data)
+                emit(ResultWrapper.Success(Unit))
             }
             is ResultWrapper.Error -> {
                 emit(ResultWrapper.Error(result.msg))
