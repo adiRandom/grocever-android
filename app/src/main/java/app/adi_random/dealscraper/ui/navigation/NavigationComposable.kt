@@ -42,7 +42,7 @@ fun Navigation(viewModel: NavigationViewModel = koinViewModel()) {
         if (isBottomDrawerOpen) {
             viewModel.drawerState.value.show()
         } else {
-            viewModel.hideBottomSheet()
+            viewModel.drawerState.value.hide()
         }
     }
 
