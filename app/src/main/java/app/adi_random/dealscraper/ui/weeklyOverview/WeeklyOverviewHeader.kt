@@ -1,4 +1,4 @@
-package app.adi_random.dealscraper.ui.productList
+package app.adi_random.dealscraper.ui.weeklyOverview
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,9 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.ui.theme.Colors
+import java.util.Date
 
 @Composable
-fun ProductListHeader(actualSpending: Float, savings: Float, logout: () -> Unit, openWeeklyOverview: () -> Unit) {
+fun WeeklyOverviewHeader(actualSpending: Float, savings: Float, startDate: Long, endDate: Long) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -28,26 +29,25 @@ fun ProductListHeader(actualSpending: Float, savings: Float, logout: () -> Unit,
                 color = Colors.Primary,
                 shape = RoundedCornerShape(0.dp, 0.dp, 24.dp, 24.dp)
             )
-            .padding(24.dp, 0.dp, 24.dp, 16.dp)
+            .padding(24.dp, 16.dp, 24.dp, 16.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            IconButton(onClick = openWeeklyOverview) {
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_calendar_month_24),
-                    contentDescription = "Open weekly overview"
-                )
-            }
-            IconButton(onClick = logout) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_logout),
-                    contentDescription = "Logout"
-                )
-            }
-        }
         Text(
-            stringResource(id = R.string.actual_spending),
+            text = "Between",
             color = Colors.TextOnPrimary,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+        )
+        Text(
+            text = "${
+                Date(startDate).toString().substring(0, 10)
+            } and ${Date(endDate).toString().substring(0, 10)}",
+            color = Colors.TextOnPrimary,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            text = "you spent",
+            color = Colors.TextOnPrimary,
+            fontSize = 16.sp,
         )
         Text(
             "${String.format("%.2f", actualSpending)} RON",

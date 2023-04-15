@@ -51,7 +51,8 @@ class ProductListViewModel(
     private val _hideKeyboard = MutableSharedFlow<Unit>()
     val hideKeyboard = _hideKeyboard.asSharedFlow()
 
-
+    private val _navigateToWeeklyOverview = MutableSharedFlow<Unit>()
+    val navigateToWeeklyOverview = _navigateToWeeklyOverview.asSharedFlow()
 
     val actualSpending = products.map { products ->
         products.map { product ->
@@ -232,6 +233,12 @@ class ProductListViewModel(
                     )
                 }
             )
+        }
+    }
+
+    fun onWeeklyOverviewClicked() {
+        viewModelScope.launch {
+            _navigateToWeeklyOverview.emit(Unit)
         }
     }
 }

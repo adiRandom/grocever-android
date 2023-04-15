@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -17,7 +16,6 @@ import app.adi_random.dealscraper.ui.navigation.Routes
 import app.adi_random.dealscraper.usecase.CollectAsEffect
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun AuthScreen(viewModel: AuthScreenViewModel = koinViewModel(), navController: NavHostController) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()

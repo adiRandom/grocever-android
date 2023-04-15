@@ -1,18 +1,18 @@
-package app.adi_random.dealscraper.ui.productList
+package app.adi_random.dealscraper.ui.weeklyOverview
 
 import android.Manifest
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -22,50 +22,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import app.adi_random.dealscraper.R
-import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
-import app.adi_random.dealscraper.data.models.bottomSheet.InfoMessageBottomSheetModel
 import app.adi_random.dealscraper.ui.misc.LoadingScreen
 import app.adi_random.dealscraper.ui.navigation.NavigationViewModel
 import app.adi_random.dealscraper.ui.navigation.Routes
+import app.adi_random.dealscraper.ui.productList.ProductEntry
 import app.adi_random.dealscraper.usecase.CollectAsEffect
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(
     ExperimentalMaterialApi::class,
-    ExperimentalComposeUiApi::class
+    ExperimentalComposeUiApi::class,
+    ExperimentalFoundationApi::class
 )
 @Composable
-fun ProductList(
-    viewModel: ProductListViewModel,
+fun WeeklyOverviewProductList(
+    viewModel: WeeklyProductListViewModel,
     navViewModel: NavigationViewModel,
     navController: NavHostController
 ) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
-
-    val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            viewModel.onImagePicked(uri, context)
-        }
-
-    val requestPermissionLauncher =
-        rememberLauncherForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            if (permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true) {
-                viewModel.startUploadService()
-            } else {
-               ( context as? Activity)?.finish()
-            }
-        }
 
 
     LaunchedEffect(true) {
@@ -76,32 +56,6 @@ fun ProductList(
         navController.navigate(Routes.getProductDetailsRoute(it))
     }
 
-    viewModel.navigateToWeeklyOverview.CollectAsEffect {
-        navController.navigate(Routes.WEEKLY_OVERVIEW)
-    }
-
-    viewModel.isBottomDrawerOpen.CollectAsEffect {
-        if (it) {
-            viewModel.openBottomDrawer()
-        } else {
-            navViewModel.hideBottomSheet()
-        }
-    }
-
-
-    viewModel.shouldPickImageFromGallery.CollectAsEffect {
-        galleryLauncher.launch("image/*")
-    }
-
-    viewModel.shouldCloseAddProductDialog.CollectAsEffect {
-        scope.launch {
-            navViewModel.hideBottomSheet()
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.requestGalleryPermission(context, requestPermissionLauncher)
-    }
 
     LoadingScreen(isLoading = isLoading) {
 
@@ -116,27 +70,19 @@ fun ProductList(
 
         Scaffold(
             scaffoldState = scaffoldState,
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
-                    viewModel.openBottomDrawer()
-                }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_add_24),
-                        contentDescription = "Menu"
-                    )
-                }
-            },
-            ) {
-            Column(modifier = Modifier.padding(it)){
+        ) {
+            Column(modifier = Modifier.padding(it)) {
+                val week by viewModel.currentWeek.collectAsStateWithLifecycle()
+                val (startDate, endDate) = week
                 val actualSpending by viewModel.actualSpending.collectAsStateWithLifecycle()
                 val savings by viewModel.savings.collectAsStateWithLifecycle()
                 val products by viewModel.products.collectAsStateWithLifecycle()
-                ProductListHeader(actualSpending = actualSpending, savings = savings,logout ={
-                    viewModel.logout()
-                }, openWeeklyOverview = {
-                    viewModel.onWeeklyOverviewClicked()
-                })
-
+                WeeklyOverviewHeader(
+                    actualSpending = actualSpending,
+                    savings = savings,
+                    startDate = startDate,
+                    endDate = endDate
+                )
                 if (products.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text(
@@ -147,15 +93,34 @@ fun ProductList(
                         )
                     }
                 } else {
-                    LazyColumn(modifier = Modifier.padding(0.dp, 8.dp)) {
-                        items(items = products, key = { it.name }) { product ->
-                            ProductEntry(product = product) {
-                                viewModel.navigateToProductDetails(it)
+                    val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE - 1)
+                    val prevPage = remember {
+                        mutableStateOf<Int>(pagerState.currentPage)
+                    }
+
+                    LaunchedEffect(pagerState.currentPage) {
+                        val delta = pagerState.currentPage - (prevPage.value ?: 0)
+                        if (delta != 0) {
+                            viewModel.updateWeek(delta)
+                        }
+                        prevPage.value = pagerState.currentPage
+                    }
+
+                    HorizontalPager(pageCount = Int.MAX_VALUE, state = pagerState) { pageIndex ->
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(0.dp, 8.dp)
+                                .fillMaxHeight()
+                        ) {
+                            items(items = products, key = { item -> item.name }) { product ->
+                                ProductEntry(product = product) { id ->
+                                    viewModel.navigateToProductDetails(id)
+                                }
                             }
                         }
                     }
-                    }
                 }
             }
+        }
     }
 }

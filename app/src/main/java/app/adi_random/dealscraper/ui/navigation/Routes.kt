@@ -6,6 +6,7 @@ object Routes {
 
     const val PRODUCT_ID_ARG = "productId"
     const val PRODUCT_DETAILS = "productDetails/{$PRODUCT_ID_ARG}"
+    const val WEEKLY_OVERVIEW = "weeklyOverview"
 
     private fun String.replaceArgWithValue(arg: String, value: String): String {
         return this.replace("{$arg}", value)

@@ -5,7 +5,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,13 +18,14 @@ import app.adi_random.dealscraper.ui.auth.AuthScreen
 import app.adi_random.dealscraper.ui.misc.InfoBottomSheet
 import app.adi_random.dealscraper.ui.productDetails.ProductDetails
 import app.adi_random.dealscraper.ui.productList.ProductList
+import app.adi_random.dealscraper.ui.weeklyOverview.WeeklyOverviewProductList
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
 @Composable
-@OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalMaterialApi::class)
+@OptIn( ExperimentalMaterialApi::class)
 
 fun Navigation(viewModel: NavigationViewModel = koinViewModel()) {
     val navController = rememberNavController()
@@ -53,6 +54,15 @@ fun Navigation(viewModel: NavigationViewModel = koinViewModel()) {
             }
             composable(Routes.PRODUCT_LIST) {
                 ProductList(
+                    viewModel = getViewModel() {
+                        parametersOf(viewModel)
+                    }, navController = navController,
+                    navViewModel = viewModel
+                )
+            }
+
+            composable(Routes.WEEKLY_OVERVIEW) {
+                WeeklyOverviewProductList(
                     viewModel = getViewModel() {
                         parametersOf(viewModel)
                     }, navController = navController,
