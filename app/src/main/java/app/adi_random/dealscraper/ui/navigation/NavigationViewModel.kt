@@ -37,7 +37,6 @@ class NavigationViewModel(authRepository: AuthRepository) : ViewModel() {
 
     fun hideBottomSheet() {
         viewModelScope.launch {
-            _bottomSheetModel.value = null
             _isBottomSheetVisible.value = false
         }
     }
