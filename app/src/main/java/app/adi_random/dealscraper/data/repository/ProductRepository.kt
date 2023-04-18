@@ -23,6 +23,18 @@ class ProductRepository(private val api: ProductApi, private val dao: ProductDao
         emit(ResultWrapper.Loading(false))
     }
 
+    fun getProductListBetweenDates(startDate: Long, endDate: Long): List<ProductModel> {
+        val productList = dao.getAllProducts()
+        for (product in productList) {
+            val purchaseInstalments = product.purchaseInstalments
+            // Convert s to ms
+            val filteredPurchaseInstalments = purchaseInstalments.filter { it.date * 1000 in startDate..endDate }
+            product.purchaseInstalments = filteredPurchaseInstalments
+        }
+
+        return productList.filter { it.purchaseInstalments.isNotEmpty() }.map { it.toModel() }
+    }
+
     private fun saveProductList(products: List<ProductModel>) {
         val productEntities: List<ProductWithPurchaseInstalmentsRelation> =
             products.map { product ->

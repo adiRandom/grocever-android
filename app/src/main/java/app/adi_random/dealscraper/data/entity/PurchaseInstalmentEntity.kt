@@ -17,6 +17,7 @@ data class PurchaseInstalmentEntity(
     val store: StoreMetadataModel,
     val productName: String,
     val unitName: String,
+    val date: Long
 ){
     fun toModel() = UserProductInstalment(
         id = id,
@@ -24,6 +25,7 @@ data class PurchaseInstalmentEntity(
         unitPrice = unitPrice,
         ocrName = ocrName,
         store = store,
-        unitName = unitName
+        unitName = unitName,
+        date = date
     )
 }

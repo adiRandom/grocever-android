@@ -9,6 +9,7 @@ data class UserProductInstalmentDto(
     val ocrName: String,
     val store: StoreMetadataDto,
     val unitName: String,
+    val date: Long
 ){
     fun toModel() = UserProductInstalment(
         qty = qty,
@@ -16,6 +17,7 @@ data class UserProductInstalmentDto(
         ocrName = ocrName,
         store = store.toModel(),
         id = id,
-        unitName = unitName
+        unitName = unitName,
+        date = date
     )
 }

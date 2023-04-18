@@ -7,6 +7,7 @@ import androidx.room.Transaction
 import app.adi_random.dealscraper.data.entity.ProductEntity
 import app.adi_random.dealscraper.data.entity.ProductWithPurchaseInstalmentsRelation
 import app.adi_random.dealscraper.data.entity.PurchaseInstalmentEntity
+import java.util.Date
 
 @Dao
 abstract class ProductDao {

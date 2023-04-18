@@ -1,5 +1,4 @@
 package app.adi_random.dealscraper.ui.navigation
-
 import androidx.compose.material.*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State

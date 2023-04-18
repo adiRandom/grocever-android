@@ -10,7 +10,7 @@ data class ProductWithPurchaseInstalmentsRelation(
         parentColumn = "name",
         entityColumn = "productName"
     )
-    val purchaseInstalments: List<PurchaseInstalmentEntity>
+    var purchaseInstalments: List<PurchaseInstalmentEntity>
 ){
     fun toModel() = ProductModel(
         id = product.id,

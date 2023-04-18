@@ -52,7 +52,7 @@ class ProductDetailsViewModel(
                 it.ocrName
             }?.mapValues { (ocrName, instalmentsByOcrName) ->
                 instalmentsByOcrName.groupBy { instalment ->
-                    Pair(instalment.store, instalment.unitPrice)
+                    Triple(instalment.store, instalment.unitPrice, instalment.date)
                 }.map { (key, instalmentsByStoreAndPrice) ->
                     UserProductInstalment(
                         qty = instalmentsByStoreAndPrice.sumOf { it.qty.toDouble() }.toFloat(),
@@ -60,7 +60,8 @@ class ProductDetailsViewModel(
                         ocrName = ocrName,
                         store = key.first,
                         id = instalmentsByStoreAndPrice.first().id,
-                        unitName = instalmentsByStoreAndPrice.first().unitName
+                        unitName = instalmentsByStoreAndPrice.first().unitName,
+                        date = key.third
                     )
                 }
             }?.toList()

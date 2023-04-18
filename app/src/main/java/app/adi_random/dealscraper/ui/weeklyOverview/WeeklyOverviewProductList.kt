@@ -83,43 +83,44 @@ fun WeeklyOverviewProductList(
                     startDate = startDate,
                     endDate = endDate
                 )
-                if (products.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text(
-                            text = "No products added yet",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                } else {
-                    val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE - 1)
-                    val prevPage = remember {
-                        mutableStateOf<Int>(pagerState.currentPage)
-                    }
 
-                    LaunchedEffect(pagerState.currentPage) {
-                        val delta = pagerState.currentPage - (prevPage.value ?: 0)
-                        if (delta != 0) {
-                            viewModel.updateWeek(delta)
-                        }
-                        prevPage.value = pagerState.currentPage
+                val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE - 1)
+                val prevPage = remember {
+                    mutableStateOf<Int>(pagerState.currentPage)
+                }
+
+                LaunchedEffect(pagerState.currentPage) {
+                    val delta = pagerState.currentPage - (prevPage.value ?: 0)
+                    if (delta != 0) {
+                        viewModel.updateWeek(delta)
+                    }
+                    prevPage.value = pagerState.currentPage
                     }
 
                     HorizontalPager(pageCount = Int.MAX_VALUE, state = pagerState) { pageIndex ->
-                        LazyColumn(
-                            modifier = Modifier
-                                .padding(0.dp, 8.dp)
-                                .fillMaxHeight()
-                        ) {
-                            items(items = products, key = { item -> item.name }) { product ->
-                                ProductEntry(product = product) { id ->
-                                    viewModel.navigateToProductDetails(id)
+                        if (products.isEmpty()) {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                Text(
+                                    text = "No products bought this week",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .padding(0.dp, 8.dp)
+                                    .fillMaxHeight()
+                            ) {
+                                items(items = products, key = { item -> item.name }) { product ->
+                                    ProductEntry(product = product) { id ->
+                                        viewModel.navigateToProductDetails(id)
+                                    }
                                 }
                             }
                         }
                     }
-                }
             }
         }
     }
