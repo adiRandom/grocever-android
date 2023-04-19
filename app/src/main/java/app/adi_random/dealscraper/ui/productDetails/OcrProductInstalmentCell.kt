@@ -16,6 +16,8 @@ import app.adi_random.dealscraper.data.models.UserProductInstalment
 import app.adi_random.dealscraper.ui.theme.Colors
 import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun OcrProductInstalmentCell(
@@ -76,7 +78,7 @@ fun OcrProductInstalmentCell(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "from ${instalment.store.name}",
+                text = "from ${instalment.store.name} on ${SimpleDateFormat("dd/MM/yy").format(Date(instalment.date * 1000))}",
                 color = Colors.TextDisabled,
                 fontSize = 12.sp
             )
