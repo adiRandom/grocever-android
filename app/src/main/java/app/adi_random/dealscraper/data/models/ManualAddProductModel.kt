@@ -7,7 +7,8 @@ open class ManualAddProductModel(
     val unitPrice: Float,
     val quantity: Float,
     val unitName: String,
-    val storeId: Int
+    val storeId: Int,
+    val date: Long?
 ){
     open fun toDto() = CreateProductDto(
         ocrName = name,

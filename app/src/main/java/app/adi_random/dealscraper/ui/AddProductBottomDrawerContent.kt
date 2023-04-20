@@ -1,11 +1,17 @@
 package app.adi_random.dealscraper.ui
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -16,6 +22,9 @@ import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.EditPurchaseInstalmentModel
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -29,10 +38,11 @@ fun AddProductBottomDrawerContent(
         onSubmit,
         pickImage
     ) = model
-    val canEditName by remember { mutableStateOf(initialOcrProduct == null) }
+    var canEditName by remember { mutableStateOf(initialOcrProduct == null) }
     var productName by remember { mutableStateOf(initialOcrProduct?.name ?: "") }
     var productQty by remember { mutableStateOf(initialOcrProduct?.quantity?.toString() ?: "") }
     var productPrice by remember { mutableStateOf(initialOcrProduct?.unitPrice?.toString() ?: "") }
+    var purchaseDate by remember { mutableStateOf(initialOcrProduct?.date) }
 
     var productUnit by remember { mutableStateOf(initialOcrProduct?.unitName) }
     val defaultUniLabel = stringResource(R.string.manually_add_unit_buc)
@@ -54,6 +64,35 @@ fun AddProductBottomDrawerContent(
         derivedStateOf {
             productName.isNotBlank() && productQty.isNotBlank() && productPrice.isNotBlank() && productUnit != null && selectedStoreId != null
         }
+    }
+
+    val context = LocalContext.current
+
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, day ->
+            Calendar.getInstance().apply {
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month)
+                set(Calendar.DAY_OF_MONTH, day)
+            }.timeInMillis.run {
+                purchaseDate = this / 1000
+            }
+        },
+        Calendar.getInstance().get(Calendar.YEAR),
+        Calendar.getInstance().get(Calendar.MONTH),
+        Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    )
+
+    LaunchedEffect(model){
+        canEditName = initialOcrProduct == null
+        productName = initialOcrProduct?.name ?: ""
+        productQty = initialOcrProduct?.quantity?.toString() ?: ""
+        productPrice = initialOcrProduct?.unitPrice?.toString() ?: ""
+        purchaseDate = initialOcrProduct?.date
+        productUnit = initialOcrProduct?.unitName
+        selectedStoreId = initialOcrProduct?.storeId
     }
 
 
@@ -165,7 +204,7 @@ fun AddProductBottomDrawerContent(
                         )
                     },
                     readOnly = true,
-                    colors = ExposedDropdownMenuDefaults.textFieldColors()
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 )
 
                 ExposedDropdownMenu(
@@ -222,6 +261,46 @@ fun AddProductBottomDrawerContent(
                 }
             }
         }
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp, 0.dp, 12.dp, 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+
+        ) {
+            TextField(
+                value = purchaseDate?.let { SimpleDateFormat("dd/MM/yy").format(it * 1000) }
+                    ?: "",
+                onValueChange = {},
+                label = {
+                    Text(
+                        text = "Purchase Date"
+                    )
+                },
+                trailingIcon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_calendar_month_24_black),
+                        contentDescription = "pickDate"
+                    )
+                },
+                readOnly = true,
+                enabled = false,
+                textStyle = TextStyle.Default.copy(
+                    color = app.adi_random.dealscraper.ui.theme.Colors.TextPrimary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        datePickerDialog.show()
+                    }
+            )
+        }
 
     }
 
@@ -248,6 +327,7 @@ fun AddProductBottomDrawerContent(
                             productQty.toFloat(),
                             productUnit ?: "",
                             selectedStoreId ?: 0,
+                            purchaseDate,
                             initialOcrProduct.id,
                         )
                     } else {
@@ -256,7 +336,8 @@ fun AddProductBottomDrawerContent(
                             productPrice.toFloat(),
                             productQty.toFloat(),
                             productUnit ?: "",
-                            selectedStoreId ?: 0
+                            selectedStoreId ?: 0,
+                            purchaseDate,
                         )
                     }
                 )

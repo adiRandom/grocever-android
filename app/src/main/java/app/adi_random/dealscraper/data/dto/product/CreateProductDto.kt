@@ -5,5 +5,6 @@ data class CreateProductDto(
     val qty: Float,
     val unitPrice: Float,
     val unitName: String,
-    val storeId: Int
+    val storeId: Int,
+    val date: Long? = null
 )
