@@ -26,5 +26,7 @@
     <string name="manually_add_img_btn">Add Image</string>
     <string name="manually_add_unit_kg">Kg</string>
     <string name="manually_add_unit_buc">Unit</string>
+    <string name="manually_add_unit_default">Pick Unit</string>
+
     <string name="manually_add_store_label">Store</string>
 </resources>

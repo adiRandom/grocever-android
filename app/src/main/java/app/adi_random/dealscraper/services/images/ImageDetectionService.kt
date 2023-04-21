@@ -16,7 +16,7 @@ import java.util.*
 
 
 class ImageDetectionService {
-    private fun detectImage(image: Bitmap, context: Context): String {
+    private fun detectImage(image: Bitmap, context: Context): List<String> {
         val imageProcessor = ImageProcessor.Builder()
             .add(ResizeOp(EXPECTED_IMAGE_SIZE, EXPECTED_IMAGE_SIZE, ResizeOp.ResizeMethod.BILINEAR))
             .add(NormalizeOp(0.5f, 0.5f))
@@ -25,7 +25,7 @@ class ImageDetectionService {
 
         val options = ImageClassifierOptions.builder()
             .setBaseOptions(BaseOptions.builder().useNnapi().build())
-            .setMaxResults(1)
+            .setMaxResults(5)
             .build()
 
         val imageClassifier = ImageClassifier.createFromFileAndOptions(
@@ -36,16 +36,18 @@ class ImageDetectionService {
         tfImage.load(image)
         val processedImage = imageProcessor.process(tfImage)
         val results: List<Classifications> = imageClassifier.classify(processedImage)
-        return results[0].categories[0].label
+        return results[0].categories.map { it.label }
     }
 
     fun isImageOfInterest(image: Bitmap, context: Context): Boolean {
         val label = detectImage(image, context)
-        return label.lowercase(Locale.getDefault()) == MENU_LABEL
+        return label.map { it.lowercase(Locale.getDefault()) }
+            .any { it == MENU_LABEL || it == ENVELOPE_LABEL }
     }
 
     companion object {
         const val EXPECTED_IMAGE_SIZE = 224
         const val MENU_LABEL = "menu"
+        const val ENVELOPE_LABEL = "envelope"
     }
 }
