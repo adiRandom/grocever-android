@@ -22,6 +22,7 @@ import app.adi_random.dealscraper.R
 import app.adi_random.dealscraper.data.models.EditPurchaseInstalmentModel
 import app.adi_random.dealscraper.data.models.ManualAddProductModel
 import app.adi_random.dealscraper.data.models.bottomSheet.AddProductBottomSheetModel
+import app.adi_random.dealscraper.usecase.MapUnitTypeUseCase
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -45,7 +46,7 @@ fun AddProductBottomDrawerContent(
     var purchaseDate by remember { mutableStateOf(initialOcrProduct?.date) }
 
     var productUnit by remember { mutableStateOf(initialOcrProduct?.unitName) }
-    val defaultUniLabel = stringResource(R.string.manually_add_unit_buc)
+    val defaultUniLabel = stringResource(R.string.manually_add_unit_default)
     val selectedUnitLabel by remember {
         derivedStateOf {
             productUnit ?: defaultUniLabel
@@ -325,7 +326,7 @@ fun AddProductBottomDrawerContent(
                             productName,
                             productPrice.toFloat(),
                             productQty.toFloat(),
-                            productUnit ?: "",
+                            MapUnitTypeUseCase.map(productUnit ?: ""),
                             selectedStoreId ?: 0,
                             purchaseDate,
                             initialOcrProduct.id,
@@ -335,7 +336,7 @@ fun AddProductBottomDrawerContent(
                             productName,
                             productPrice.toFloat(),
                             productQty.toFloat(),
-                            productUnit ?: "",
+                            MapUnitTypeUseCase.map(productUnit ?: ""),
                             selectedStoreId ?: 0,
                             purchaseDate,
                         )

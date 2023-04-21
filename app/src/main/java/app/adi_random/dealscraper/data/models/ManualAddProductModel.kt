@@ -15,6 +15,7 @@ open class ManualAddProductModel(
         qty = quantity,
         unitPrice = unitPrice,
         unitName = unitName,
-        storeId = storeId
+        storeId = storeId,
+        date = date
     )
 }
