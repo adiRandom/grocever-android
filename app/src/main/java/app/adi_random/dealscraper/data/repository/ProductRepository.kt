@@ -6,6 +6,65 @@ import app.adi_random.dealscraper.data.entity.ProductWithPurchaseInstalmentsRela
 import app.adi_random.dealscraper.data.models.*
 import app.adi_random.dealscraper.services.api.ProductApi
 import kotlinx.coroutines.flow.flow
+import java.util.Date
+
+
+//val mockProductList = listOf(
+//    ProductModel(
+//        1,
+//        "Product 1",
+//        20f,
+//        listOf(
+//            UserProductInstalment(
+//                1,
+//                1f,
+//                12f,
+//                "P 1",
+//                StoreMetadataModel(
+//                    1,
+//                    "Store 1",
+//                    "https://www.google.com",
+//                ),
+//                "BUC",
+//                Date().time
+//            )
+//        ),
+//        StoreMetadataModel(
+//            1,
+//            "Store 1",
+//            "https://www.google.com",
+//        ),
+//        "cora.ro",
+//        "",
+//    ),
+//    ProductModel(
+//        2,
+//        "Product 2",
+//        20f,
+//        listOf(
+//            UserProductInstalment(
+//                2,
+//                1f,
+//                30f,
+//                "P 2",
+//                StoreMetadataModel(
+//                    1,
+//                    "Store 1",
+//                    "https://www.google.com",
+//                ),
+//                "BUC",
+//                Date().time
+//            )
+//        ),
+//        StoreMetadataModel(
+//            1,
+//            "Store 1",
+//            "https://www.google.com",
+//        ),
+//        "cora.ro",
+//        "",
+//    )
+//)
 
 class ProductRepository(private val api: ProductApi, private val dao: ProductDao) {
     fun getProductList() = flow {

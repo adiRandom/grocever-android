@@ -54,20 +54,28 @@ class ProductListViewModel(
     private val _navigateToWeeklyOverview = MutableSharedFlow<Unit>()
     val navigateToWeeklyOverview = _navigateToWeeklyOverview.asSharedFlow()
 
+    // Ignore in the savings calculation the products that have a best_product worse than what the user paid
+    private val productsForSavings = products.map{products ->
+        products.map{product->
+            // Filter out the purchase instalments that are cheaper than the best price
+            val filteredPurchaseInstalments = product.purchaseInstalments.filter { purchaseInstalment -> purchaseInstalment.unitPrice >= product.bestPrice }
+            product.copy(purchaseInstalments = filteredPurchaseInstalments)
+        }.filter { product -> product.purchaseInstalments.isNotEmpty() }
+    }
+
     val actualSpending = products.map { products ->
         products.map { product ->
             product.purchaseInstalments.fold(0f) { acc, purchaseInstalment -> acc + purchaseInstalment.qty * purchaseInstalment.unitPrice }
         }.sum()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
-    private val bestSpending = products.map { products ->
+    val savings = productsForSavings.map { products ->
         products.map { product ->
-            product.bestPrice
+            val spent = product.purchaseInstalments.fold(0f) { acc, purchaseInstalment ->
+                acc + purchaseInstalment.qty * purchaseInstalment.unitPrice
+            }
+            spent - product.bestPrice
         }.sum()
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
-
-    val savings = actualSpending.combine(bestSpending) { actual, best ->
-        actual - best
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
     private val _shouldPickImageFromGallery = MutableSharedFlow<Unit>()

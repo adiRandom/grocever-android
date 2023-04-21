@@ -1,5 +1,6 @@
 package app.adi_random.dealscraper.ui.productDetails
 
+import androidx.core.util.rangeTo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.adi_random.dealscraper.data.models.*
@@ -67,19 +68,21 @@ class ProductDetailsViewModel(
             }?.toList()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val actualSpending = product.map { productModel ->
-        productModel?.purchaseInstalments?.sumOf { it.qty.toDouble() * it.unitPrice }?.toFloat()
-            ?: 0f
+    private val instalmentsForSaving = product.map { product ->
+        // Filter out the purchase instalments that are cheaper than the best price
+        product?.purchaseInstalments?.filter { purchaseInstalment -> purchaseInstalment.unitPrice >= product.bestPrice }
+    }
+
+    private val actualSpending = product.map { product ->
+        product?.purchaseInstalments?.fold(0f) { acc, purchaseInstalment -> acc + purchaseInstalment.qty * purchaseInstalment.unitPrice }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
-    private val bestSpending = product.map { productModel ->
-        (productModel?.purchaseInstalments?.sumOf { instalment -> instalment.qty.toDouble() }
-            ?.toFloat() ?: 0f) * (productModel?.bestPrice ?: 0f)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
-
-    val savings = actualSpending.combine(bestSpending) { actual, best ->
-        actual - best
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
+    val savings =
+        instalmentsForSaving.combine(actualSpending) { instalments, spent -> instalments to spent }
+            .map { (purchaseInstalments, spent) ->
+                val saves = (spent?:0f) - (product.value?.bestPrice ?: 0f)
+                if (saves >0) saves else 0f
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0f)
 
     private fun getProduct() {
         viewModelScope.launch(Dispatchers.IO) {
