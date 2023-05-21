@@ -179,7 +179,7 @@ class ProductListViewModel(
     }
 
     fun logout() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             authRepository.logout()
         }
     }
