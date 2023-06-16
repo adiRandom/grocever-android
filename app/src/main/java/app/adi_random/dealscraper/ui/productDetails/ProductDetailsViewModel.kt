@@ -102,6 +102,7 @@ class ProductDetailsViewModel(
             productRepository.reportMissLink(productId, ocrProductName)
             reportedProductLinks.value =
                 reportedProductLinks.value + ReportMissLinkModel(productId, ocrProductName)
+            navigationViewModel.hideBottomSheet()
         }
     }
 

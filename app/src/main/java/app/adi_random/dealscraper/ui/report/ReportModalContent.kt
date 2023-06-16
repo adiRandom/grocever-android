@@ -22,6 +22,10 @@ fun ReportModalContent(model: ReportBottomSheetModel) {
 
     var selectedOcrProduct by remember { mutableStateOf(model.ocrProductNames.first()) }
 
+    LaunchedEffect(model.ocrProductNames){
+        selectedOcrProduct = model.ocrProductNames.first()
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
